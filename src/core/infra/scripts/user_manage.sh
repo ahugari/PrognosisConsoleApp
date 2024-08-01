@@ -1,7 +1,7 @@
 #!/bin/bash
 
 USER_STORE="$HOME/PrognosisConsoleApp/src/core/infra/data/user-store.txt"
-# ~/PrognosisConsoleApp/src/core/infra/scripts$
+
 
 # function to initialize the user registration
 function initiate_user_registration() {
@@ -18,6 +18,7 @@ function initiate_user_registration() {
         # add the user to the user-store.txt 
         echo "$email,$uuid,$role" >> "$USER_STORE"
         echo "User registration initiated successfully."
+        return 0
     fi
 }
 
@@ -46,6 +47,7 @@ function patient_complete_registration() {
         # Replace the entire line while preserving the role
         sed -i "s/.*,$UUID,.*/$UUID,$firstName,$lastName,$userId,$hashed_password,$email,$role,$dateOfBirth,$isHIVPositive,$diagnosisDate,$isOnART,$ARTStartDate,$countryISO/" "$USER_STORE"
         echo "Patient profile completed successfully."
+        return 0
     else
         echo "Error: No user found with the provided UUID."
         return 1
@@ -64,10 +66,11 @@ function admin_complete_registration() {
 
     local hashed_password=$(echo -n "$password" | openssl dgst -sha256 | awk '{print $2}')
 
-    # Find the line with the matching UUID and email, and update the profile
+    # Find the line with the matching UUID and email, andN update the profile
     if grep -q "$email,$UUID" "$USER_STORE"; then
-        sed -i "s|$email,$UUID,.*$|$UUID,$firstName,$lastName,$userId,$hashed_password,$email,0|" "$USER_STORE"
+        sed -i "s|$email,$UUID,.*$|$UUID,$firstName,$lastame,$userId,$hashed_password,$email,0|" "$USER_STORE"
         echo "Admin profile completed successfully."
+        return 0
     else
         echo "Error: No user found with the provided UUID and email."
         return 1
