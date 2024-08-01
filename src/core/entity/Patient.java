@@ -1,6 +1,7 @@
 package core.entity;
 
 import java.util.Date;
+import core.entity.Role;
 
 public class Patient extends User{
     public Patient( String email) {
