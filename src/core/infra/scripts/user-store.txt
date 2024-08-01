@@ -1,4 +1,0 @@
-UUID,firstName,lastName,userId,hashed_password,email,role,dateOfBirth,isHIVPositive,diagnosisDate,isOnART,ARTStartDate,countryISO
-
-UUID12345,John,Doe,admin01,hashedPassword123,testuser@example.com,0
-UUID54321,Jane,Doe,patient01,securePassword456,jane.doe@example.com,1,1985-06-15,true,2020-01-01,true,2020-01-15,US

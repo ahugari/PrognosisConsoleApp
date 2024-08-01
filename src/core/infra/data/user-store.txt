@@ -1,0 +1,4 @@
+UUID,firstName,lastName,userId,hashed_password,email,role,dateOfBirth,isHIVPositive,diagnosisDate,isOnART,ARTStartDate,countryISO
+
+
+jane.doe@example.com,UUID54321,1
