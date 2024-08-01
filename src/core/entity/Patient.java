@@ -3,8 +3,8 @@ package core.entity;
 import java.util.Date;
 
 public class Patient extends User{
-    public Patient(Role role, String email) {
-        super(role, email);
+    public Patient( String email) {
+        super(Role.PATIENT, email);
     }
     
     private String dateOfBirth;
@@ -65,5 +65,5 @@ public class Patient extends User{
     }
     public int modifyProfile(User userUpdate){
         return 0;
-    }p
+    }
 }

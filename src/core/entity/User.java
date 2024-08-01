@@ -4,6 +4,7 @@ package core.entity;
 import java.io.File;
 
 public abstract class User{
+    //TO-DO: make role optinal
     public User(Role role, String email) {
         this.role = role;
         this.email = email;
@@ -41,7 +42,7 @@ public abstract class User{
         this.password = password;
     }
 
-    protected Role role = Role.Patient;
+    protected Role role = Role.PATIENT;
     public Role getRole() {
         return role;
     }

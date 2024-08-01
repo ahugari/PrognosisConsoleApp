@@ -3,8 +3,8 @@ package core.entity;
 import java.io.File;
 
 public class Admin extends User {
-    public Admin(Role role, String email) {
-        super(role, email);
+    public Admin(String email) {
+        super(Role.ADMIN, email);
         //TODO Auto-generated constructor stub
     }
 
