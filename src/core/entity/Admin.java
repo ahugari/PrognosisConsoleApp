@@ -1,7 +1,7 @@
 package core.entity;
 
 import java.io.File;
-
+import core.entity.Role;
 public class Admin extends User {
     public Admin(String email) {
         super(Role.ADMIN, email);

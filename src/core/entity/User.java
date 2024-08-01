@@ -70,4 +70,14 @@ public abstract class User{
     public File downloadCalendar(){
         return null;
     }
+
+    protected boolean registrationCompleted;
+
+    public boolean isRegistrationCompleted() {
+        return registrationCompleted;
+    }
+    public void setRegistrationCompleted(boolean registrationComplete) {
+        this.registrationCompleted = registrationComplete;
+    }
+
 }
