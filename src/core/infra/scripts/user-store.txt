@@ -1,0 +1,1 @@
+testuser@example.comUUID12345,John,Doe,johndoe,hashed_password_123,testuser@example.com,1990-01-01,true,2023-01-01,true,2023-01-02,US
