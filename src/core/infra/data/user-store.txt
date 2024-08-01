@@ -1,4 +1,6 @@
-UUID,firstName,lastName,userId,hashed_password,email,role,dateOfBirth,isHIVPositive,diagnosisDate,isOnART,ARTStartDate,countryISO
+UUID,firstName,lastName,userId,hashed_password,email,role,dateOfBirth,isHIVPositive,diagnosisDate,isOnART,ARTStartDate,countryISO,isProfileComplete
 
 
-jane.doe@example.com,UUID54321,1
+
+UUID54321,Jane,Doe,patient01,473f213e5495613daf73db5233e163ba63924dbf74d3241702658ff84b30f1ab,jane.doe@example.com,1,1985-06-15,true,2020-01-01,true,2020-01-15,US,true
+
