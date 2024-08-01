@@ -1,6 +1,7 @@
 #!/bin/bash
 
-USER_STORE="user-store.txt"
+USER_STORE="$HOME/PrognosisConsoleApp/src/core/infra/data/user-store.txt"
+# ~/PrognosisConsoleApp/src/core/infra/scripts$
 
 # function to initialize the user registration
 function initiate_user_registration() {
@@ -10,12 +11,12 @@ function initiate_user_registration() {
     local role=$3
 
     # check if email already exists
-    if grep -q "^$email," "user-store.txt"; then
+    if grep -q "^$email," "$USER_STORE" || grep -q ", $uuid," "$USER_STORE"; then
         echo "Error: A user with this email already exists."
         return 1
     else
         # add the user to the user-store.txt 
-        echo "$email,$uuid,$role" >> "user-store.txt"
+        echo "$email,$uuid,$role" >> "$USER_STORE"
         echo "User registration initiated successfully."
     fi
 }
@@ -35,7 +36,7 @@ function patient_complete_registration() {
     local ARTStartDate="${11}"
     local countryISO="${12}"
 
-    local hashed_password="$password"
+    local hashed_password=$(echo -n "$password" | openssl dgst -sha256 | awk '{print $2}')
 
     # Find the line with the matching UUID
     if grep -q ",$UUID," "$USER_STORE"; then
@@ -61,7 +62,7 @@ function admin_complete_registration() {
     local UUID="$5"
     local email="$6"
 
-    local hashed_password="$password"
+    local hashed_password=$(echo -n "$password" | openssl dgst -sha256 | awk '{print $2}')
 
     # Find the line with the matching UUID and email, and update the profile
     if grep -q "$email,$UUID" "$USER_STORE"; then
@@ -80,16 +81,23 @@ function login() {
     local password="$2"
 
     while IFS=',' read -r UUID firstName lastName userId stored_password stored_email role dateOfBirth isHIVPositive diagnosisDate isOnART ARTStartDate countryISO; do
-        if [[ "$email" == "$stored_email" ]] && [[ "$password" == "$stored_password" ]]; then
-            echo "Login successful for $firstName $lastName (UserID: $userId)."
-            return 0
+        if [[ "$email" == "$stored_email" ]]; then
+            # Hash the entered password using SHA-256 to match the stored hashed password
+            local hashed_password=$(echo -n "$password" | openssl dgst -sha256 | awk '{print $2}')
+            
+            if [[ "$hashed_password" == "$stored_password" ]]; then
+                echo "Login successful for $firstName $lastName (UserID: $userId)."
+                return 0
+            else
+                echo "Login failed. Invalid credentials."
+                return 1
+            fi
         fi
     done < "user-store.txt"
 
     echo "Login failed. Invalid credentials."
     return 1
 }
-
 
 
 
