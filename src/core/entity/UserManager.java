@@ -21,7 +21,6 @@ public class UserManager {
             String userEmail = email.trim();
 
             String uuid = UUID.randomUUID().toString();
-            //TODO: fix role mismatch
             int roleAsIndex = Integer.parseInt(role.trim())-1;
             Role userRole = Role.values()[roleAsIndex];
             User user;

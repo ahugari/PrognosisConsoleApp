@@ -1,5 +1,7 @@
 package core.infra.ui;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Scanner;
 
 import core.entity.Patient;
@@ -52,7 +54,8 @@ public class Main {
                 Helpers.printMessage(newUser.getUuid());
 
                 Helpers.printInfo("Registering user...");
-                ProcessManager.registerUser(newUser);
+
+                ProcessManager.initiateUserRegistration(newUser);
 
                 break;
 
@@ -69,18 +72,15 @@ public class Main {
                 String exUserPassword = input.nextLine();
                 
                 Helpers.printInfo("Logging you in...");
+
+                createUserDataReport();
+                createUserAnalyticsReport();
+
                 //hash the password and compare with existing
                 //run login method here
                 //show different menu depending on user type
                 break;
 
-                case 0:
-                Helpers.printInfo("Goodbye :)!");
-                    return;
-
-                default:
-                Helpers.printError("Unknown input value. Application exiting...");
-                    break;
                 }
         } catch (NumberFormatException e) {
             Helpers.printError("Wrong input value. Application exiting...");
@@ -91,4 +91,38 @@ public class Main {
         // ProcessManager.initiateUser(newUser);
 
     }
+
+
+    private static File createUserDataReport(){
+        String filePath = "core/infra/resources/userData.csv";
+        File userData = new File(filePath);
+        try{
+            if(userData.createNewFile()){
+                Helpers.printInfo("User data report created. Download this report from this path:" + filePath);
+                return userData;
+            }else{
+                Helpers.printInfo("Failed to create user report.");
+            }
+        }catch(IOException ex){
+            Helpers.printError("Failed to create user report." + ex.getLocalizedMessage());
+        }
+        return null;
+    }
+
+    private static File createUserAnalyticsReport(){
+        String filePath = "core/infra/resources/userAnalytics.csv";
+        File userData = new File(filePath);
+        try{
+            if(userData.createNewFile()){
+                Helpers.printInfo("User data report created. Download this report from this path:" + filePath);
+                return userData;
+            }else{
+                Helpers.printInfo("Failed to create user report.");
+            }
+        }catch(IOException ex){
+            Helpers.printError("Failed to create user report." + ex.getLocalizedMessage());
+        }
+        return null;
+    }
+    
 }
