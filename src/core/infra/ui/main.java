@@ -17,7 +17,7 @@ public class Main {
             Helpers.printLine();
             Helpers.printMessage("Welcome to Prognosis Application!");
             Helpers.printLine();
-            Helpers.printMessage("Let's get started. What would you like to do?");
+            Helpers.printMessage("Let's get started. What is your role?");
             Helpers.printOption(1, "Register New User");
             Helpers.printOption(2, "Login");
             Helpers.printUserOptionPrompt();
