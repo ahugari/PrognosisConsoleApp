@@ -13,16 +13,16 @@ function login() {
             
             if [[ "$hashed_password" == "$stored_password" ]]; then
                 echo "Login successful for $firstName $lastName (UserID: $userId)."
-                return 0
+                exit 0
             else
                 echo "Login failed. Invalid credentials."
-                return 1
+                exit 1
             fi
         fi
     done < "$USER_STORE"
 
-    echo "Login failed. Invalid credentials."
-    return 1
+    echo "Login failed."
+    exit 2
 }
 
 login "$1" "$2"
