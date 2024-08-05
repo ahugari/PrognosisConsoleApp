@@ -140,6 +140,14 @@ public class ProcessManager {
       return runBashScript(cmdArray);
     }
 
+    public static int viewUser(String uuid){
+      //TODO: implement view user
+      return 1;
+    }
+    public static int editUser(String uuid){
+      //TODO: implement view user
+      return 1;
+    }
     
     public static int findUserByRole(String uuid, Role role){
       String[] cmdArray = new String[] {"bash", "core/infra/scripts/find_user_by_role.sh", uuid, role.toString()};
