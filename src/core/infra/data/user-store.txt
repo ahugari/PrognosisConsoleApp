@@ -3,3 +3,4 @@ UUID,email,role,isProfileComplete,firstName,lastName,hashed_password,userId,date
 afa60375-970b-4e50-956c-26e2d8eaddb5,admin@hotmail.com,ADMIN,true,John,Doe,6dff47814e92e3a14c9f021d2d3ddd353a03e5bf3b0f49d53e80a1a3606c86d6,afa60375-970b-4e50-956c-26e2d8eaddb5,
 f46ac6e6-df58-41a7-b787-a5450ff6ce98,adam@gmail.com,PATIENT,true,Adam,Doe,6dff47814e92e3a14c9f021d2d3ddd353a03e5bf3b0f49d53e80a1a3606c86d6,f46ac6e6-df58-41a7-b787-a5450ff6ce98,1995-01-01,true,Fri Jan 01 00:00:00 CET 1999,true,Wed Jan 01 00:00:00 CET 2020,UGA
 
+f7d5e6f6-f377-40f5-bb4e-3f62975659c1,tegan@gmail.com,PATIENT,true,Tegan,Tamira,5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5,f7d5e6f6-f377-40f5-bb4e-3f62975659c1,1990-02-03,true,Sat Mar 17 00:00:00 CAT 2012,true,Mon Jun 13 00:00:00 CAT 2016,CAN
