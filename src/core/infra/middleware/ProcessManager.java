@@ -142,6 +142,7 @@ public class ProcessManager {
 
     public static int viewUser(String uuid){
       //TODO: implement view user
+      findUser(uuid);
       return 1;
     }
     public static int editUser(String uuid){

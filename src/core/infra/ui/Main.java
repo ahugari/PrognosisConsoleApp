@@ -129,12 +129,17 @@ public class Main {
         Helpers.printMessage("Complete Profile Registration");
         Helpers.printLine();
 
-        Helpers.printUserFieldPrompt("email");
-        String userEmail = input.nextLine();
-
-        Helpers.printUserFieldPrompt("uuid");
-        String uuid = input.nextLine();
-
+        boolean validationResult =false;
+        String uuid = "";
+        String userEmail = "";
+        while(!validationResult){
+            userEmail= setInputfromScanner(input,"email");
+            uuid= setInputfromScanner(input, "uuid");
+            if(!uuid.isEmpty() && !userEmail.isEmpty()){
+                validationResult =true;
+            }
+        }
+        
         if (userRole == Role.PATIENT) {
             completePatientRegistration(uuid, userEmail);
         } else if (userRole == Role.ADMIN) {
