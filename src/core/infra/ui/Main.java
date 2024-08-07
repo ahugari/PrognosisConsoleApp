@@ -326,6 +326,7 @@ public class Main {
         switch (userInput) {
             case 1:
                 //TODO: read user
+                ProcessManager.getLifeExpectancyStats();
                 break;
 
             case 2:
