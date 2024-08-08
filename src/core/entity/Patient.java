@@ -75,7 +75,7 @@ public class Patient extends User{
         int diagnosis_year=Calendar.YEAR;
         myCalendar.setTime(this.artStartDate);
         int artstart_year=Calendar.YEAR;
-
+        int diff =artstart_year - diagnosis_year;
         //get lifespan from bash script
         int lifespan=0;
         int life_expectancy=lifespan-age;
@@ -84,13 +84,16 @@ public class Patient extends User{
                
                 // artstartyear-diagnosisyear determines the number of times you'll apply the 0.9 survival rate chances 
                 // apply log logic maybe
-                life_expectancy=(int)((lifespan-age)*(0.9));
+                
+                life_expectancy=(int)((lifespan-age)*Math.pow(0.9, diff+1));
                 return life_expectancy;
             }
             else{
               life_expectancy=(diagnosis_year+5) - current_year;
               return life_expectancy;
             }
+            
+
             
         }
         
