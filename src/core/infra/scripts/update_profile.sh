@@ -4,7 +4,7 @@ source ./find_user.sh
 USER_STORE="$HOME/PrognosisConsoleApp/src/core/infra/data/user-store.txt"
 # "$PWD/core/infra/data/user-store.txt" ---> Make sure to change the path
 
-function patient_update_profile() {
+function update_profile() {
     local uuid="$1"
     local current_value="$2"
     local new_value="$3"

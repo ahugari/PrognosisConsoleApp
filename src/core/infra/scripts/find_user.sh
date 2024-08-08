@@ -18,8 +18,8 @@ function find_user() {
                 echo "$uUID,$stored_email,$role,$isProfileComplete,$firstName,$lastName,$stored_password,$userId,$dateOfBirth,$isHIVPositive,$diagnosisDate,$isOnART,$ARTStartDate,$countryISO"
             fi
             found_user=true
-            break
             return 0
+            break
         fi
     done < "$USER_STORE"
 
