@@ -310,6 +310,7 @@ public class Main {
         }
 
     }
+    
     private static void showPatientUI(){
     //TODO: implement patient UI
     while (true) {
@@ -331,6 +332,7 @@ public class Main {
 
             case 2:
                 //TODO: edit user
+                // ProcessManager.editUser(null, null, null)
                 break;
 
             case 0:
@@ -344,6 +346,7 @@ public class Main {
             }
         }
     }
+    
     private static void createUserReports(){
         try {
             File userDataReport = createUserDataReport();
@@ -358,6 +361,7 @@ public class Main {
             Helpers.printError("Failed to create user reports: " + ex.getLocalizedMessage());            
         }
     }
+    
     private static void initiateNewUser(){
             User newUser;
 
@@ -404,6 +408,7 @@ public class Main {
         }
         return null;
     }
+    
     private static File createUserAnalyticsReport(){
         String filePath = "core/infra/resources/userAnalytics.csv";
         File userData = new File(filePath);
