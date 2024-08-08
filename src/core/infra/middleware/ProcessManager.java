@@ -4,7 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import core.entity.Admin;
 import core.entity.Patient;
@@ -140,10 +145,44 @@ public class ProcessManager {
       return runBashScript(cmdArray);
     }
 
+    public static int viewUser(String uuid){
+      //TODO: implement view user
+      findUser(uuid);
+      return 1;
+    }
+    public static int editUser(String uuid){
+      //TODO: implement view user
+      return 1;
+    }
     
     public static int findUserByRole(String uuid, Role role){
       String[] cmdArray = new String[] {"bash", "core/infra/scripts/find_user_by_role.sh", uuid, role.toString()};
       return runBashScript(cmdArray);
+    }
+
+    public static Map<String, String> getLifeExpectancyStats(){
+      Map<String,String> statsMap = new HashMap<>();
+      try{
+        String[] cmdArray = new String[]{"bash", "core/infra/scripts/life_expectancy.sh"};
+        ProcessBuilder pb = new ProcessBuilder(cmdArray);
+        pb.redirectErrorStream(true);
+        Process p=pb.start();
+        p.waitFor();
+        
+        while(p.inputReader().ready()){
+          String readInput = p.inputReader().readLine();
+          statsMap.put(readInput.split(" ")[0], readInput.split(" ")[1]);
+        }
+        
+        return statsMap;
+        
+      }catch(IOException ex ){
+        ex.getStackTrace();
+      }catch(InterruptedException ex){
+        ex.getStackTrace();
+      }
+
+      return statsMap;
     }
 
     public static int verifyCountryISO(String isoCode){

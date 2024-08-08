@@ -35,55 +35,39 @@ public class Main {
 
         try{
             int roleInput = Integer.parseInt(input.nextLine());
-
             switch (roleInput) {
-
                 case 1:
-
                     userRole = Role.PATIENT;
-
                     break;
 
                 case 2:
-
                     userRole = Role.ADMIN;
-
                     break;
 
                 case 0:
-
                     Helpers.printInfo("Goodbye :)!");
-
                     return;
 
                 default:
-
                     Helpers.printError("Unknown role. Exiting application...");
-
                     return;
-
             }
-
-            ProcessManager processManager = new ProcessManager();
 
             while (true) {
                 Helpers.printLine();
                 Helpers.printMessage("Choose an option:");
 
-                if(userRole == Role.ADMIN) {
-                    Helpers.printOption(1, "Register New User");
-                }
+                // if(userRole == Role.ADMIN) {
+                //     Helpers.printOption(1, "Register New User");
+                // }
                 Helpers.printOption(2, "Login");
                 Helpers.printOption(3, "Complete Profile Registration");
                 Helpers.printOption(0, "Exit");
                 Helpers.printLine();
 
-
                 int userInput = Integer.parseInt(input.nextLine());
 
-
                 switch (userInput) {
-
                     case 1:
                     //registering new user
                         //TODO: might not need this after refactoring
@@ -96,22 +80,7 @@ public class Main {
 
                     case 3:
                         //profile registration
-                        Helpers.printLine();
-                        Helpers.printMessage("Complete Profile Registration");
-                        Helpers.printLine();
-
-                        Helpers.printUserFieldPrompt("email");
-                        String userEmail = input.nextLine();
-
-                        Helpers.printUserFieldPrompt("uuid");
-                        String uuid = input.nextLine();
-
-                        if (userRole == Role.PATIENT) {
-                            completePatientRegistration(uuid, userEmail);
-                        } else if (userRole == Role.ADMIN) {
-                            completeAdminRegistration(uuid, userEmail);
-                        }
-
+                        completeProfileRegistration();
                         break;
 
                     case 0:
@@ -123,7 +92,6 @@ public class Main {
                         Helpers.printError("Unknown option. Exiting application...");
                         return;
                     }
-
                 }
         } catch (NumberFormatException e) {
             Helpers.printError("Wrong input value. Application exiting...");
@@ -138,32 +106,47 @@ public class Main {
         Helpers.printMessage("Logging into the Application");
         Helpers.printLine();
 
-        Helpers.printUserFieldPrompt("email");
-
-        String loginEmail = input.nextLine();
-
-        Helpers.printUserFieldPrompt("Password");
-
-        String userPassword = input.nextLine();
-
+        String loginEmail = setInputfromScanner(input, "email");
+        String userPassword = setInputfromScanner(input, "password");
 
         Helpers.printInfo("Logging you in...");
 
-
         int loginResult = ProcessManager.login(loginEmail, userPassword);
         
-        if(loginResult ==0)
+        if(loginResult==0)
         {
+            Helpers.printMessage("User logged in successfully.");
+            if(userRole == Role.PATIENT){
+                showPatientUI();
+            }else if (userRole == Role.ADMIN){
+                showAdminUI();
+            }                     
         }
-        Helpers.printMessage("User logged in successfully.");
-
-        if(userRole == Role.PATIENT){
-            showPatientUI();
-        }else if (userRole == Role.ADMIN){
-            showAdminUI();
-        }                     
-
     }
+
+    private static void completeProfileRegistration(){
+        Helpers.printLine();
+        Helpers.printMessage("Complete Profile Registration");
+        Helpers.printLine();
+
+        boolean validationResult =false;
+        String uuid = "";
+        String userEmail = "";
+        while(!validationResult){
+            userEmail= setInputfromScanner(input,"email");
+            uuid= setInputfromScanner(input, "uuid");
+            if(!uuid.isEmpty() && !userEmail.isEmpty()){
+                validationResult =true;
+            }
+        }
+        
+        if (userRole == Role.PATIENT) {
+            completePatientRegistration(uuid, userEmail);
+        } else if (userRole == Role.ADMIN) {
+            completeAdminRegistration(uuid, userEmail);
+        }
+    }
+
     private static void completePatientRegistration(String uuid, String userEmail){
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); 
 
@@ -329,7 +312,37 @@ public class Main {
     }
     private static void showPatientUI(){
     //TODO: implement patient UI
+    while (true) {
+        Helpers.printLine();
+        Helpers.printMessage("Choose an option:");
 
+        Helpers.printOption(1, "View Profile");
+        Helpers.printOption(2, "Edit Profile");
+        Helpers.printOption(0, "Exit");
+        Helpers.printLine();
+
+        int userInput = Integer.parseInt(input.nextLine());
+
+        switch (userInput) {
+            case 1:
+                //TODO: read user
+                ProcessManager.getLifeExpectancyStats();
+                break;
+
+            case 2:
+                //TODO: edit user
+                break;
+
+            case 0:
+                //application exit
+                Helpers.printInfo("Goodbye :)!");
+                return;
+
+            default:
+                Helpers.printError("Unknown option. Exiting application...");
+                return;
+            }
+        }
     }
     private static void createUserReports(){
         try {
