@@ -1,5 +1,4 @@
 UUID,email,role,isProfileComplete,firstName,lastName,hashed_password,userId,dateOfBirth,isHIVPositive,diagnosisDate,isOnART,ARTStartDate,countryISO
 15d534c8-bba5-425f-8575-23926ea63e0d,admin@gmail.com,ADMIN,false
-afa60375-970b-4e50-956c-26e2d8eaddb5,admin@hotmail.com,ADMIN,true,John,Doe,6dff47814e92e3a14c9f021d2d3ddd353a03e5bf3b0f49d53e80a1a3606c86d6,afa60375-970b-4e50-956c-26e2d8eaddb5,
-f46ac6e6-df58-41a7-b787-a5450ff6ce98,adam@gmail.com,PATIENT,true,Adam,Doe,6dff47814e92e3a14c9f021d2d3ddd353a03e5bf3b0f49d53e80a1a3606c86d6,f46ac6e6-df58-41a7-b787-a5450ff6ce98,1995-01-01,true,Fri Jan 01 00:00:00 CET 1999,true,Wed Jan 01 00:00:00 CET 2020,UGA
-
+afa60375-970b-4e50-956c-26e2d8eaddb5,admin@hotmail.com,ADMIN,true,Philips,Doe,6dff47814e92e3a14c9f021d2d3ddd353a03e5bf3b0f49d53e80a1a3606c86d6,afa60375-970b-4e50-956c-26e2d8eaddb5
+f46ac6e6-df58-41a7-b787-a5450ff6ce98,adam@gmail.com,PATIENT,true,Mark,Doe,6dff47814e92e3a14c9f021d2d3ddd353a03e5bf3b0f49d53e80a1a3606c86d6,f46ac6e6-df58-41a7-b787-a5450ff6ce98,1995-01-01,true,Fri Jan 01 00:00:00 CET 1999,true,Wed Jan 01 00:00:00 CET 2020,UGA
