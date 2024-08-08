@@ -1,8 +1,10 @@
 package core.entity;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Calendar;
 import core.entity.Role;
+import core.infra.middleware.ProcessManager;
 
 
 public class Patient extends User{
@@ -78,6 +80,10 @@ public class Patient extends User{
         int diff =artstart_year - diagnosis_year;
         //get lifespan from bash script
         int lifespan=0;
+        Map<String, String> map = ProcessManager.getLifeExpectancyStats();
+        if(map.containsKey(this.countryISO)){
+            lifespan=Integer.parseInt(map.get(this.countryISO));
+        }
         int life_expectancy=lifespan-age;
         if (isHIVPositive==true){
             if (isOnART==true){
