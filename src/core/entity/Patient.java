@@ -3,6 +3,7 @@ package core.entity;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Map;
 import java.util.Calendar;
 import core.entity.Role;
@@ -75,23 +76,21 @@ public class Patient extends User{
         try {
             Helpers.printError(this.getDateOfBirth());
             Date myDate = new Date();
-        Calendar myCalendar =Calendar.getInstance();
+        Calendar myCalendar = new GregorianCalendar();
         myCalendar.setTime(myDate);
-        Integer current_year=Calendar.YEAR;
+        Integer current_year=myCalendar.get(Calendar.YEAR);
         myCalendar.setTime(sdf.parse(this.dateOfBirth));
-        Integer birth_year=Calendar.YEAR;
+        // Integer birth_year=Calendar.YEAR;
+        Integer birth_year=myCalendar.get(Calendar.YEAR);
         Integer age= current_year - birth_year;
         myCalendar.setTime(sdf.parse(this.diagnosisDate));
-        Integer diagnosis_year=Calendar.YEAR;
+        Integer diagnosis_year=myCalendar.get(Calendar.YEAR);
         myCalendar.setTime(sdf.parse(this.artStartDate));
-        Integer artstart_year=Calendar.YEAR;
+        Integer artstart_year=myCalendar.get(Calendar.YEAR);
         Integer diff =artstart_year - diagnosis_year;
-        //get lifespan from bash script
+        
         Double lifespan=0.0;
-        Helpers.printError("HELP: CUURENT YEAR" + current_year);
-        Helpers.printError("HELP: DOB" + birth_year);
-        Helpers.printError("HELP: age" + age);
-        Helpers.printError("HELP: diagnosis_year" + diagnosis_year);
+        // Helpers.printError("HELP: CUURENT YEAR" + current_year);
         Map<String, String> map = ProcessManager.getLifeExpectancyStats();
         if(map.containsKey(this.countryISO)){
             lifespan=Double.parseDouble(map.get(this.countryISO));
@@ -99,6 +98,7 @@ public class Patient extends User{
         }
         Helpers.printInfo("HELP:" +age);
         Double life_expectancy=lifespan-age;
+        
         if (isHIVPositive==true){
             if (isOnART==true){
                 // artstartyear-diagnosisyear determines the number of times you'll apply the 0.9 survival rate chances 
