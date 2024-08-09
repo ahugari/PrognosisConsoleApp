@@ -11,6 +11,8 @@ function find_user() {
     while IFS=',' read -r uUID stored_email role isProfileComplete firstName lastName stored_password userId dateOfBirth isHIVPositive diagnosisDate isOnART ARTStartDate countryISO; do
         
         if [[ "$uuid" == "$uUID" ]]; then
+            # printf "firstName:$firstName,lastName:$lastName,uuid:$uuid,role:$role,dob:$dateOfBirth,isHIVPositive:$isHIVPositive,diagnosisDate:$diagnosisDate,isOnART:$isOnART,ARTStartDate:$ARTStartDate,countryISO:$countryISO";
+            # exit 0;
             # returning the user object based on the role to ease the update
             if [[ "$role" == "ADMIN" ]]; then
                 echo "$uUID,$stored_email,$role,$isProfileComplete,$firstName,$lastName,$stored_password,$userId"
@@ -20,8 +22,6 @@ function find_user() {
             found_user=true
             return 0
             break
-            printf "firstName:$firstName,lastName:$lastName,uuid:$uuid,role:$role,dob:$dateOfBirth,isHIVPositive:$isHIVPositive,diagnosisDate:$diagnosisDate,isOnART:$isOnART,ARTStartDate:$ARTStartDate,countryISO:$countryISO";
-            exit 0;
         fi
     done < "$USER_STORE"
 
