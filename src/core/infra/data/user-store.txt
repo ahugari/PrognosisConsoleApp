@@ -4,3 +4,4 @@ afa60375-970b-4e50-956c-26e2d8eaddb5,admin@hotmail.com,ADMIN,true,John,Doe,6dff4
 f46ac6e6-df58-41a7-b787-a5450ff6ce98,adam@gmail.com,PATIENT,true,Adam,Doe,6dff47814e92e3a14c9f021d2d3ddd353a03e5bf3b0f49d53e80a1a3606c86d6,f46ac6e6-df58-41a7-b787-a5450ff6ce98,1995-01-01,true,1999-01-01,true,2020-01-01,UGA
 50156c99-554c-430e-9001-e8ec14e2a67b,doe@gmail.com,PATIENT,false
 dd97f755-cf02-4765-a900-f340f0427477,mary@gmail.com,PATIENT,true,Mary,Jane,6dff47814e92e3a14c9f021d2d3ddd353a03e5bf3b0f49d53e80a1a3606c86d6,dd97f755-cf02-4765-a900-f340f0427477,2022-01-01,true,2022-08-09,true,2022-09-09,RWA,
+a449c838-b7e4-427d-b780-14aaa4c93c2d,paul,PATIENT,true,paul,mary,6dff47814e92e3a14c9f021d2d3ddd353a03e5bf3b0f49d53e80a1a3606c86d6,a449c838-b7e4-427d-b780-14aaa4c93c2d,2000-01-01,true,2021-01-01,true,2023-01-01,RWA,

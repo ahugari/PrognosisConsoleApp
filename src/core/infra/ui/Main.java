@@ -31,7 +31,7 @@ public class Main {
     public static void main(String[] args){
 
         Helpers.printLine();
-        Helpers.printMessage("Welcome to the Life Prognosis Application!!");
+        Helpers.printMessage("Welcome to the Life Prognosis Application");
         Helpers.printLine();
 
         Helpers.printMessage("Let's get started. What is your role?");
@@ -66,9 +66,10 @@ public class Main {
 
                 // if(userRole == Role.ADMIN) {
                     // }
+
                 Helpers.printOption(2, "Login");
                 Helpers.printOption(3, "Complete Profile Registration");
-                Helpers.printOption(0, "Exit");
+                Helpers.printOption(0, "Logout");
                 Helpers.printLine();
 
                 int userInput = Integer.parseInt(input.nextLine());
@@ -185,8 +186,8 @@ public class Main {
             Helpers.printError("Invalid date format entered: " + ex.getLocalizedMessage());
         } 
         Helpers.printMessage("Are you HIV positive?");
-        Helpers.printOption(1, "True");
-        Helpers.printOption(2, "False");
+        Helpers.printOption(1, "Yes");
+        Helpers.printOption(2, "N0");
         Helpers.printUserOptionPrompt();
 
         Integer isHIVPositive = Integer.parseInt(input.nextLine());
@@ -202,8 +203,8 @@ public class Main {
                 diagnosisDate = dateFormat.format(dateFormat.parse(input.nextLine()));
     
                 Helpers.printMessage("Are you on ART treatment?");
-                Helpers.printOption(1, "True");
-                Helpers.printOption(2, "False");
+                Helpers.printOption(1, "Yes");
+                Helpers.printOption(2, "No");
                 Helpers.printUserOptionPrompt();
     
                 isOnART = Integer.parseInt(input.nextLine());
@@ -284,7 +285,7 @@ public class Main {
         Helpers.printOption(1, "Register New User");
         Helpers.printOption(2, "Download User Reports");
 
-        Helpers.printOption(0, "Exit");
+        Helpers.printOption(0, "Logout");
         Helpers.printLine();
 
         int userInput = Integer.parseInt(input.nextLine());
@@ -369,10 +370,10 @@ public class Main {
                 patient.setEmail(userAttributes.get("email"));
                 patient.setDateOfBirth(sdf.format(sdf.parse(userAttributes.get("dob"))));
                 patient.setDiagnosisDate(sdf.format(sdf.parse(userAttributes.get("diagnosisDate"))));
-                patient.setLastName(userAttributes.get("email"));
+                patient.setLastName(userAttributes.get("lastName"));
                 patient.setOnART("true".equals(userAttributes.get("isOnART")));
                 patient.setFirstName(userAttributes.get("firstName"));
-                patient.setPassword(userAttributes.get("lastName"));
+                patient.setPassword(userAttributes.get("password"));
                 patient.setUuid(userAttributes.get("uuid"));
                 patient.setHIVPositive("true".equals(userAttributes.get("isHIVPositive")));
                 return patient;
@@ -436,13 +437,14 @@ public class Main {
         Helpers.printMessage("Choose a field to edit:");
         Helpers.printOption(1, "First Name: "+ patient.getFirstName());
         Helpers.printOption(2, "Last Name: "+ patient.getLastName());
-        Helpers.printOption(3, "Email: " + patient.getEmail());
+        Helpers.printOption(3, "Email: " + "This field has been hidden.");
         Helpers.printOption(4, "Date of Birth: " + patient.getDateOfBirth());
         Helpers.printOption(5, "Is HIV Positive?: " + patient.getHIVPositive());
         Helpers.printOption(6, "Diagnosis Date: " + patient.getDiagnosisDate());
         Helpers.printOption(7, "Is on ART?: " + patient.isOnART());
         Helpers.printOption(8, "ART Start Date: " + patient.getArtStartDate());
         Helpers.printOption(9, "Country: "+ patient.getCountryISO());
+        Helpers.printOption(10, "Password: "+ "**********");
         Helpers.printOption(0, "Exit");
         Helpers.printLine();
                 

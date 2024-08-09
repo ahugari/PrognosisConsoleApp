@@ -10,7 +10,7 @@ public class Helpers {
         print(message, "Error:");
     }
     public static void printLine(){
-        print("------------------------------",null);
+        print("-----------------------------------------",null);
     }
     public static void printMessage(String message){
         print(message, null);

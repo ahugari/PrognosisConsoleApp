@@ -80,4 +80,4 @@ echo "please wait..."
     
 }
 
-# patient_update_profile "$1" "$2" "$3" 
+patient_update_profile "$1" "$2" "$3" 
