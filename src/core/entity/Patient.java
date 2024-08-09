@@ -74,8 +74,8 @@ public class Patient extends User{
     public Double calculateSurvivalRate(){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
-            Helpers.printError(this.getDateOfBirth());
-            Date myDate = new Date();
+            // Helpers.printError(this.getDateOfBirth());
+        Date myDate = new Date();
         Calendar myCalendar = new GregorianCalendar();
         myCalendar.setTime(myDate);
         Integer current_year=myCalendar.get(Calendar.YEAR);
@@ -94,9 +94,9 @@ public class Patient extends User{
         Map<String, String> map = ProcessManager.getLifeExpectancyStats();
         if(map.containsKey(this.countryISO)){
             lifespan=Double.parseDouble(map.get(this.countryISO));
-            Helpers.printInfo(lifespan.toString());
+            // Helpers.printInfo(lifespan.toString());
         }
-        Helpers.printInfo("HELP:" +age);
+        // Helpers.printInfo("HELP:" +age);
         Double life_expectancy=lifespan-age;
         
         if (isHIVPositive==true){

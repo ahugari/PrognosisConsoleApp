@@ -69,7 +69,7 @@ public class Main {
 
                 Helpers.printOption(2, "Login");
                 Helpers.printOption(3, "Complete Profile Registration");
-                Helpers.printOption(0, "Logout");
+                Helpers.printOption(0, "Exit");
                 Helpers.printLine();
 
                 int userInput = Integer.parseInt(input.nextLine());
@@ -317,7 +317,7 @@ public class Main {
         Helpers.printMessage("Choose an option:");
         Helpers.printOption(1, "View Profile");
         Helpers.printOption(2, "Edit Profile");
-        Helpers.printOption(0, "Exit");
+        Helpers.printOption(0, "Logout");
         Helpers.printLine();
 
         int patientInput = Integer.parseInt(input.nextLine());
@@ -325,6 +325,7 @@ public class Main {
         switch (patientInput) {
             case 1:
                 Double lifeSpan = patient.calculateSurvivalRate();
+                // Helpers.printError(lifeSpan.toString());
                 // Helpers.printInfo("LIFESPAN:" + lifeSpan.toString());
                 ProcessManager.getPatientProfileIncludingLifeSpan(patient.getUuid(), lifeSpan);
                 return;
@@ -437,14 +438,12 @@ public class Main {
         Helpers.printMessage("Choose a field to edit:");
         Helpers.printOption(1, "First Name: "+ patient.getFirstName());
         Helpers.printOption(2, "Last Name: "+ patient.getLastName());
-        Helpers.printOption(3, "Email: " + "This field has been hidden.");
-        Helpers.printOption(4, "Date of Birth: " + patient.getDateOfBirth());
-        Helpers.printOption(5, "Is HIV Positive?: " + patient.getHIVPositive());
-        Helpers.printOption(6, "Diagnosis Date: " + patient.getDiagnosisDate());
-        Helpers.printOption(7, "Is on ART?: " + patient.isOnART());
-        Helpers.printOption(8, "ART Start Date: " + patient.getArtStartDate());
-        Helpers.printOption(9, "Country: "+ patient.getCountryISO());
-        Helpers.printOption(10, "Password: "+ "**********");
+        Helpers.printOption(3, "Date of Birth: " + patient.getDateOfBirth());
+        Helpers.printOption(4, "Is HIV Positive?: " + patient.getHIVPositive());
+        Helpers.printOption(5, "Diagnosis Date: " + patient.getDiagnosisDate());
+        Helpers.printOption(6, "Is on ART?: " + patient.isOnART());
+        Helpers.printOption(7, "ART Start Date: " + patient.getArtStartDate());
+        Helpers.printOption(8, "Country: "+ patient.getCountryISO());
         Helpers.printOption(0, "Exit");
         Helpers.printLine();
                 
