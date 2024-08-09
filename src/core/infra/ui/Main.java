@@ -7,6 +7,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import core.entity.Admin;
 import core.entity.Patient;
@@ -182,8 +184,15 @@ public class Main {
 
 
         Helpers.printUserFieldPrompt("date of birth (YYYY-MM-DD)");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        String dateOfBirth_str = input.nextLine();
+        Date dateOfBirth=null;
 
-        String dateOfBirth = input.nextLine();
+        try{
+            dateOfBirth = format.parse(dateOfBirth_str);
+        }catch(ParseException e){
+            e.printStackTrace();
+        }
 
         Helpers.printMessage("Are you HIV positive?");
         Helpers.printOption(1, "True");

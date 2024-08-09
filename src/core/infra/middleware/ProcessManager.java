@@ -54,7 +54,7 @@ public class ProcessManager {
         Process p;
     
         try{
-            String[] cmdArray = new String[]{"bash", "core/infra/scripts/patient_registration.sh", patient.getFirstName(),patient.getLastName(),patient.getUserId(),patient.getPassword(), patient.getUuid(), patient.getEmail(), patient.getDateOfBirth(),isHIVPositive, patient.getDiagnosisDate().toString(), isOnART, patient.getArtStartDate().toString(), patient.getCountryISO() };
+            String[] cmdArray = new String[]{"bash", "core/infra/scripts/patient_registration.sh", patient.getFirstName(),patient.getLastName(),patient.getUserId(),patient.getPassword(), patient.getUuid(), patient.getEmail(), patient.getDateOfBirth().toString(),isHIVPositive, patient.getDiagnosisDate().toString(), isOnART, patient.getArtStartDate().toString(), patient.getCountryISO() };
             
             Helpers.printInfo("Calling bash script...");
             ProcessBuilder pb = new ProcessBuilder(cmdArray);
