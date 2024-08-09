@@ -5,7 +5,12 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Scanner;
 
 import core.entity.Admin;
@@ -58,8 +63,7 @@ public class Main {
                 Helpers.printMessage("Choose an option:");
 
                 // if(userRole == Role.ADMIN) {
-                //     Helpers.printOption(1, "Register New User");
-                // }
+                    // }
                 Helpers.printOption(2, "Login");
                 Helpers.printOption(3, "Complete Profile Registration");
                 Helpers.printOption(0, "Exit");
@@ -111,15 +115,15 @@ public class Main {
 
         Helpers.printInfo("Logging you in...");
 
-        int loginResult = ProcessManager.login(loginEmail, userPassword);
+        String loginUserId = ProcessManager.login(loginEmail, userPassword);
         
-        if(loginResult==0)
+        if(loginUserId!=null)
         {
             Helpers.printMessage("User logged in successfully.");
             if(userRole == Role.PATIENT){
-                showPatientUI();
+                showPatientUI(loginUserId);
             }else if (userRole == Role.ADMIN){
-                showAdminUI();
+                showAdminUI(loginUserId);
             }                     
         }
     }
@@ -149,7 +153,7 @@ public class Main {
 
     private static void completePatientRegistration(String uuid, String userEmail){
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); 
-
+        Date dateOfBirth = new Date();
         int findResult = ProcessManager.findUserByRole(uuid, userRole);
 
         if( findResult == 1){
@@ -164,27 +168,20 @@ public class Main {
         }
 
         Helpers.printUserFieldPrompt("firstname");
-
         String firstname = input.nextLine();
 
-
-
         Helpers.printUserFieldPrompt("lastname");
-
         String lastname = input.nextLine();
 
-
-
         Helpers.printUserFieldPrompt("password");
-
         String password = input.nextLine();
 
-
-
         Helpers.printUserFieldPrompt("date of birth (YYYY-MM-DD)");
-
-        String dateOfBirth = input.nextLine();
-
+        try{
+            dateOfBirth = dateFormat.parse(input.nextLine());
+        } catch (ParseException ex) {
+            Helpers.printError("Invalid date format entered: " + ex.getLocalizedMessage());
+        } 
         Helpers.printMessage("Are you HIV positive?");
         Helpers.printOption(1, "True");
         Helpers.printOption(2, "False");
@@ -218,7 +215,6 @@ public class Main {
             } catch (NumberFormatException ex){
                 Helpers.printError("Invalid number entered: " + ex.getLocalizedMessage());
             }
-
         } 
 
         Helpers.printUserFieldPrompt("Country ISO (e.g., US, UK)");
@@ -232,13 +228,12 @@ public class Main {
         patient.setDiagnosisDate(diagnosisDate);
         patient.setEmail(userEmail);
         patient.setLastName(lastname);
-        patient.setOnART(isOnART==1? true: false);
+        patient.setOnART(isOnART==1);
         patient.setFirstName(firstname);
         patient.setPassword(password);
         patient.setUuid(uuid);
         patient.setUserId(uuid);
-        patient.setHIVPositive(isHIVPositive ==1? true :false);
-
+        patient.setHIVPositive(isHIVPositive ==1);
 
         Helpers.printInfo("Completing Patient Profile...");
 
@@ -246,9 +241,9 @@ public class Main {
     }
 
     private static void completeAdminRegistration(String uuid, String userEmail){
-        int findResult = ProcessManager.findUser(uuid);
+        String findResult = ProcessManager.findUser(uuid);
 
-        if(findResult!=0){
+        if(findResult==null){
                 Helpers.printInfo("Could not verify user.");
                 return;
             }
@@ -277,7 +272,7 @@ public class Main {
         return inputFromScanner;
     }
 
-    private static void showAdminUI(){
+    private static void showAdminUI(String loginUserId){
         if(userRole != Role.ADMIN) {
             return;
         }
@@ -286,6 +281,7 @@ public class Main {
 
         Helpers.printOption(1, "Register New User");
         Helpers.printOption(2, "Download User Reports");
+
         Helpers.printOption(0, "Exit");
         Helpers.printLine();
 
@@ -310,8 +306,10 @@ public class Main {
         }
 
     }
-    private static void showPatientUI(){
-    //TODO: implement patient UI
+    private static void showPatientUI(String loginUserId){
+    String rawUser = ProcessManager.findUser(loginUserId);
+    Helpers.printInfo("yeah" +rawUser);
+    User user = convertRawUserIntoUser(rawUser);
     while (true) {
         Helpers.printLine();
         Helpers.printMessage("Choose an option:");
@@ -331,7 +329,9 @@ public class Main {
 
             case 2:
                 //TODO: edit user
-                break;
+                showEditPatientMenu(user);
+
+                return;
 
             case 0:
                 //application exit
@@ -344,16 +344,99 @@ public class Main {
             }
         }
     }
+
+    private static User convertRawUserIntoUser(String rawUser){
+        String[] userArray = rawUser.split(",");
+        Helpers.printInfo(userArray[0]);
+        Map<String, String> userAttributes = new HashMap();
+        for (String attribute : userArray) {
+            var attr = attribute.trim().split(":");
+            Helpers.printInfo(attribute.toString());
+            Helpers.printInfo(attr[0].toString());
+            Helpers.printInfo(attr[1].toString());
+            userAttributes.put(attr[0].trim(), attr[1].trim());
+        }
+
+        String role = userAttributes.get("role");
+        Helpers.printInfo(role);
+        if(role.equals(Role.ADMIN.toString())){
+            Admin admin = new Admin(userAttributes.get("email"));
+            admin.setFirstName(userAttributes.get("firstName"));
+            admin.setLastName(userAttributes.get("lastName"));
+            admin.setUuid(userAttributes.get("uuid"));
+            return admin;
+        }else{
+            try{
+                Patient patient = new Patient(userAttributes.get("email"));
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.ENGLISH);
+                patient.setArtStartDate(df.parse(userAttributes.get("ARTStartDate")));
+                patient.setCountryISO(userAttributes.get("countryISO"));
+                patient.setEmail(userAttributes.get("email"));
+                patient.setDateOfBirth(sdf.parse(userAttributes.get("dob")));
+                patient.setDiagnosisDate(sdf.parse(userAttributes.get("diagnosisDate")));
+                patient.setLastName(userAttributes.get("email"));
+                patient.setOnART("true".equals(userAttributes.get("isOnART")));
+                patient.setFirstName(userAttributes.get("firstName"));
+                patient.setPassword(userAttributes.get("lastName"));
+                patient.setUuid(userAttributes.get("uuid"));
+                patient.setHIVPositive("true".equals(userAttributes.get("isHIVPositive")));
+                return patient;
+            }catch(Exception ex){
+                Helpers.printError(ex.getLocalizedMessage());
+            }
+        }
+
+        return null;
+    }
+    private static void showEditPatientMenu(User user) {
+        // TODO Auto-generated method study
+        //placeholder content
+        Patient patient = (Patient)ProcessManager.viewUser("");
+        // UUID,email,role,isProfileComplete,firstName,lastName,hashed_password,userId,dateOfBirth,isHIVPositive,diagnosisDate,isOnART,ARTStartDate,countryISO
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Helpers.printMessage("Choose a field to edit:");
+        Helpers.printOption(1, "First Name:"+ patient.getFirstName());
+        Helpers.printOption(2, "Last Name"+ patient.getLastName());
+        Helpers.printOption(3, "Email" + patient.getEmail());
+        Helpers.printOption(4, "Date of Birth" + patient.getDateOfBirth());
+        Helpers.printOption(5, "Is HIV Positive?" + patient.getHIVPositive());
+        Helpers.printOption(6, "Diagnosis Date" + patient.getDiagnosisDate());
+        Helpers.printOption(7, "Is on ART?" + patient.isOnART());
+        Helpers.printOption(8, "ART Start Date" + patient.getArtStartDate());
+        Helpers.printOption(9, "Country");
+        Helpers.printLine();
+                
+        int userInput = Integer.parseInt((input.nextLine()));
+        
+        switch (userInput) {
+            case 1:
+                Helpers.printOption(1, "Capture new first name");
+                ProcessManager.editUser(patient.getUuid(), patient.getFirstName(), input.nextLine());
+                break;
+        
+                case 2:
+                    Helpers.printUserFieldPrompt("first name");
+                    ProcessManager.editUser(patient.getUuid(), patient.getFirstName(), input.nextLine());
+                    break;
+            default:
+                break;
+        }
+
+        return;
+    }
+
     private static void createUserReports(){
         try {
-            File userDataReport = createUserDataReport();
-            if(userDataReport!=null){                
-                Helpers.printInfo("User report created. Please check resources folder.");            
-            }
-            File userAnalyticsReport = createUserAnalyticsReport();
-            if(userAnalyticsReport!=null){
-                Helpers.printInfo("User Analytics created. Please check resources folder.");            
-            }
+            ProcessManager.generateAllUserData();
+            // File userDataReport = createUserDataReport();
+            // if(userDataReport!=null){                
+            //     Helpers.printInfo("User report created. Please check resources folder.");            
+            // }
+            // File userAnalyticsReport = createUserAnalyticsReport();
+            // if(userAnalyticsReport!=null){
+            //     Helpers.printInfo("User Analytics created. Please check resources folder.");            
+            // }
         } catch (Exception ex) {
             Helpers.printError("Failed to create user reports: " + ex.getLocalizedMessage());            
         }

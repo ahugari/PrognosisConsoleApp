@@ -28,7 +28,7 @@ function patient_complete_registration() {
             return 1
         else
             # Update the profile with the provided details and set isProfileComplete to true
-            sed -i "s/$UUID,.*/$UUID,$email,PATIENT,true,$firstName,$lastName,$hashed_password,$userId,$dateOfBirth,$isHIVPositive,$diagnosisDate,$isOnART,$ARTStartDate,$countryISO/" "$USER_STORE"
+            sed -i "s/$UUID,.*/$UUID,$email,PATIENT,true,$firstName,$lastName,$hashed_password,$userId,$dateOfBirth,$isHIVPositive,$diagnosisDate,$isOnART,$ARTStartDate,$countryISO,$lifespan" "$USER_STORE"
             echo "Patient profile completed successfully."
             return 0
         fi

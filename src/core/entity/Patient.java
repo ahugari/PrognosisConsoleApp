@@ -1,18 +1,21 @@
 package core.entity;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import core.entity.Role;
 
 public class Patient extends User{
+    
+
     public Patient( String email) {
         super(Role.PATIENT, email);
     }
     
-    private String dateOfBirth;
-    public String getDateOfBirth() {
+    private Date dateOfBirth;
+    public Date getDateOfBirth() {
         return dateOfBirth;
     }
-    public void setDateOfBirth(String dateOfBirth) {
+    public void setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 

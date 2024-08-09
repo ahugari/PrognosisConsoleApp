@@ -12,7 +12,8 @@ function login() {
             local hashed_password=$(echo -n "$password" | openssl dgst -sha256 | awk '{print $2}')
             
             if [[ "$hashed_password" == "$stored_password" ]]; then
-                echo "Login successful for $firstName $lastName (UserID: $userId)."
+                # echo "Login successful for $firstName $lastName (UserID: $userId)."
+                echo $UUID
                 exit 0
             else
                 echo "Login failed. Invalid credentials."
