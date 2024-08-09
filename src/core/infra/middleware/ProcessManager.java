@@ -233,8 +233,34 @@ public class ProcessManager {
     }
 
     public static int editUser(String uuid, String oldValue, String newValue){
-      //TODO: implement view user
-      return 1;
+          //   function to start the update profile process
+          Process p;
+          try {
+            String[] cmdArray = new String[]{"bash", "core/infra/scripts/update_profile.sh", uuid, current_value, new_value};
+    
+            Helpers.printInfo("Calling the bash script...");
+            ProcessBuilder pb = new ProcessBuilder(cmdArray);
+    
+            pb.redirectErrorStream(true);
+            pb.inheritIO();
+    
+            Helpers.printInfo("Executing bash script...");
+            p=pb.start();
+            p.waitFor();
+    
+        Helpers.printInfo("Bash script executed successfully. Returning results....");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        String line;
+        while((line=reader.readLine()) != null) {
+          Helpers.printInfo(line);
+        };
+    
+        return 0;
+    
+          } catch(IOException | InterruptedException e) {
+            Helpers.printError("Could not complete script execution." + e.getLocalizedMessage());
+          }
+        return 0;
     }
     
     public static int findUserByRole(String uuid, Role role){
