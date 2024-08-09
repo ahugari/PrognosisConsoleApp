@@ -153,7 +153,7 @@ public class Main {
 
     private static void completePatientRegistration(String uuid, String userEmail){
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); 
-        Date dateOfBirth = new Date();
+        String dateOfBirth = "";
         int findResult = ProcessManager.findUserByRole(uuid, userRole);
 
         if( findResult == 1){
@@ -178,7 +178,7 @@ public class Main {
 
         Helpers.printUserFieldPrompt("date of birth (YYYY-MM-DD)");
         try{
-            dateOfBirth = dateFormat.parse(input.nextLine());
+            dateOfBirth = dateFormat.format(dateFormat.parse(input.nextLine()));
         } catch (ParseException ex) {
             Helpers.printError("Invalid date format entered: " + ex.getLocalizedMessage());
         } 
@@ -189,15 +189,15 @@ public class Main {
 
         Integer isHIVPositive = Integer.parseInt(input.nextLine());
 
-        Date artStartDate = new Date();
-        Date diagnosisDate = new Date();
+        String artStartDate = "";
+        String diagnosisDate = "";
         Integer isOnART = 0;
 
         if (isHIVPositive == 1) {
             Helpers.printUserFieldPrompt("diagnosis date (YYYY-MM-DD)");
 
             try {
-                diagnosisDate = dateFormat.parse(input.nextLine());
+                diagnosisDate = dateFormat.format(dateFormat.parse(input.nextLine()));
     
                 Helpers.printMessage("Are you on ART treatment?");
                 Helpers.printOption(1, "True");
@@ -208,7 +208,7 @@ public class Main {
     
                 if (isOnART == 1) {
                     Helpers.printUserFieldPrompt("ART Start date (YYYY-MM-DD)");
-                    artStartDate = dateFormat.parse(input.nextLine());
+                    artStartDate = dateFormat.format(dateFormat.parse(input.nextLine()));
                 }
             } catch (ParseException ex) {
                 Helpers.printError("Invalid date format entered: " + ex.getLocalizedMessage());
@@ -348,7 +348,7 @@ public class Main {
     private static User convertRawUserIntoUser(String rawUser){
         String[] userArray = rawUser.split(",");
         Helpers.printInfo(userArray[0]);
-        Map<String, String> userAttributes = new HashMap();
+        Map<String, String> userAttributes = new HashMap<>();
         for (String attribute : userArray) {
             var attr = attribute.trim().split(":");
             Helpers.printInfo(attribute.toString());
@@ -369,12 +369,11 @@ public class Main {
             try{
                 Patient patient = new Patient(userAttributes.get("email"));
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.ENGLISH);
-                patient.setArtStartDate(df.parse(userAttributes.get("ARTStartDate")));
+                patient.setArtStartDate(sdf.format(sdf.parse(userAttributes.get("ARTStartDate"))));
                 patient.setCountryISO(userAttributes.get("countryISO"));
                 patient.setEmail(userAttributes.get("email"));
-                patient.setDateOfBirth(sdf.parse(userAttributes.get("dob")));
-                patient.setDiagnosisDate(sdf.parse(userAttributes.get("diagnosisDate")));
+                patient.setDateOfBirth(sdf.format(sdf.parse(userAttributes.get("dob"))));
+                patient.setDiagnosisDate(sdf.format(sdf.parse(userAttributes.get("diagnosisDate"))));
                 patient.setLastName(userAttributes.get("email"));
                 patient.setOnART("true".equals(userAttributes.get("isOnART")));
                 patient.setFirstName(userAttributes.get("firstName"));
@@ -423,12 +422,12 @@ public class Main {
                 break;
         }
 
-        return;
     }
 
     private static void createUserReports(){
         try {
             ProcessManager.generateAllUserData();
+            //Old delivarable to download two empty csv files.
             // File userDataReport = createUserDataReport();
             // if(userDataReport!=null){                
             //     Helpers.printInfo("User report created. Please check resources folder.");            
@@ -464,7 +463,7 @@ public class Main {
                 return;
                 
             Helpers.printMessage("User created successfully.");
-            Helpers.printMessage("Please take note of your UUID and use it to login and complete registration.");
+            Helpers.printMessage("Please take note of your UUID below and use it to login and complete registration:");
             Helpers.printMessage(newUser.getUuid());
             Helpers.printInfo("Registering user...");
 

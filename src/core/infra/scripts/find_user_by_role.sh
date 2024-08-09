@@ -1,10 +1,10 @@
 #! /bin/bash
 
 # use in debug mode only
-USER_STORE="$PWD/src/core/infra/data/user-store.txt"
+# USER_STORE="$PWD/src/core/infra/data/user-store.txt"
 
 # use in production mode
-# USER_STORE="$PWD/core/infra/data/user-store.txt"
+USER_STORE="$PWD/core/infra/data/user-store.txt"
 
 function find_user_by_role() {
     local user_id="$1"

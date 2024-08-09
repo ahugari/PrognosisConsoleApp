@@ -57,10 +57,10 @@ public class ProcessManager {
     
         try{
           //use while in debug mode 
-          String[] cmdArray = new String[]{"bash", "src/core/infra/scripts/patient_registration.sh", patient.getFirstName(),patient.getLastName(),patient.getUserId(),patient.getPassword(), patient.getUuid(), patient.getEmail(), patient.getDateOfBirth().toString(),isHIVPositive, patient.getDiagnosisDate().toString(), isOnART, patient.getArtStartDate().toString(), patient.getCountryISO() };
+          // String[] cmdArray = new String[]{"bash", "src/core/infra/scripts/patient_registration.sh", patient.getFirstName(),patient.getLastName(),patient.getUserId(),patient.getPassword(), patient.getUuid(), patient.getEmail(), patient.getDateOfBirth().toString(),isHIVPositive, patient.getDiagnosisDate().toString(), isOnART, patient.getArtStartDate().toString(), patient.getCountryISO() };
 
           //use while in production mode
-            // String[] cmdArray = new String[]{"bash", "core/infra/scripts/patient_registration.sh", patient.getFirstName(),patient.getLastName(),patient.getUserId(),patient.getPassword(), patient.getUuid(), patient.getEmail(), patient.getDateOfBirth(),isHIVPositive, patient.getDiagnosisDate().toString(), isOnART, patient.getArtStartDate().toString(), patient.getCountryISO() };
+            String[] cmdArray = new String[]{"bash", "core/infra/scripts/patient_registration.sh", patient.getFirstName(),patient.getLastName(),patient.getUserId(),patient.getPassword(), patient.getUuid(), patient.getEmail(), patient.getDateOfBirth(),isHIVPositive, patient.getDiagnosisDate(), isOnART, patient.getArtStartDate(), patient.getCountryISO() };
             
             Helpers.printInfo("Calling bash script...");
             ProcessBuilder pb = new ProcessBuilder(cmdArray);
@@ -139,7 +139,10 @@ public class ProcessManager {
           UUID uId=null;
           try{
             String rs = p.inputReader().readLine();
-            uId = UUID.fromString(rs);
+            Helpers.printError(rs);
+            if(rs != null){
+              uId = UUID.fromString(rs);
+            }
           }catch(IllegalArgumentException ex){
             Helpers.printError("Unable to complete login.");
           }
@@ -236,10 +239,10 @@ public class ProcessManager {
     
     public static int findUserByRole(String uuid, Role role){
       //use this in debug mode only
-      String[] cmdArray = new String[] {"bash", "src/core/infra/scripts/find_user_by_role.sh", uuid, role.toString()};
+      // String[] cmdArray = new String[] {"bash", "src/core/infra/scripts/find_user_by_role.sh", uuid, role.toString()};
 
       //use this in production mode only
-      // String[] cmdArray = new String[] {"bash", "core/infra/scripts/find_user_by_role.sh", uuid, role.toString()};
+      String[] cmdArray = new String[] {"bash", "core/infra/scripts/find_user_by_role.sh", uuid, role.toString()};
 
       try{
         Helpers.printInfo("Calling bash script...");

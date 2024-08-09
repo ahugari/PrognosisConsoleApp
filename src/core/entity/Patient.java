@@ -11,11 +11,11 @@ public class Patient extends User{
         super(Role.PATIENT, email);
     }
     
-    private Date dateOfBirth;
-    public Date getDateOfBirth() {
+    private String dateOfBirth;
+    public String getDateOfBirth() {
         return dateOfBirth;
     }
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -28,11 +28,11 @@ public class Patient extends User{
         return isHIVPositive;
     }
 
-    private Date diagnosisDate;
-    public Date getDiagnosisDate() {
+    private String diagnosisDate;
+    public String getDiagnosisDate() {
         return diagnosisDate;
     }
-    public void setDiagnosisDate(Date diagnosisDate) {
+    public void setDiagnosisDate(String diagnosisDate) {
         this.diagnosisDate = diagnosisDate;
     }
 
@@ -44,11 +44,11 @@ public class Patient extends User{
         this.isOnART = isOnART;
     }
 
-    private Date artStartDate;
-    public Date getArtStartDate() {
+    private String artStartDate;
+    public String getArtStartDate() {
         return artStartDate;
     }
-    public void setArtStartDate(Date artStartDate) {
+    public void setArtStartDate(String artStartDate) {
         this.artStartDate = artStartDate;
     }
 
