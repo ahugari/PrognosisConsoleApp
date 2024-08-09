@@ -1,8 +1,9 @@
 #!/bin/bash
 
-source ./find_user.sh
-USER_STORE="$HOME/PrognosisConsoleApp/src/core/infra/data/user-store.txt"
+source ./core/infra/scripts/find_user.sh
+# USER_STORE="$HOME/PrognosisConsoleApp/src/core/infra/data/user-store.txt"
 # "$PWD/core/infra/data/user-store.txt" ---> Make sure to change the path
+USER_STORE="$PWD/core/infra/data/user-store.txt"
 
 function update_profile() {
     local uuid="$1"
@@ -11,14 +12,14 @@ function update_profile() {
 
 
     local user_data
-    user_data=$(find_user "$uuid")
+    user_data=$(lookup_user "$uuid")
 
     # checking if the exit status of the find_user function is not equal to 0: user not found
     if [[ $? -ne 0 ]]; then
         echo "Error:: User with the UUID $uuid not found"
         return 1
     fi
-
+echo "please wait..."
     # track the line number for the user data
     local line_number=0
     local update_line=""
@@ -26,8 +27,10 @@ function update_profile() {
     # find the user's line number in the file 
     while IFS="," read -r uUID stored_email role isProfileComplete firstName lastName stored_password userId dateOfBirth isHIVPositive diagnosisDate isOnART ARTStartDate countryISO; do 
         ((line_number++))
+echo "please wait..."
 
         if [[ "$uuid" == "$uUID" ]]; then
+echo "please wait..."
 
             if [[ 
                 "$stored_email" == "$current_value" || 
@@ -40,9 +43,11 @@ function update_profile() {
                 "$ARTStartDate" == "$current_value" ||
                 "$countryISO" == "$current_value" 
                  ]]; then
+echo "please wait..."
 
             # NOTE: do we enable users to update their passwords? If so, how to we handle that since the password is encrypted and we don't know the data parsed is for password so we encrypt before checking?
                 update_line=$(echo "$user_data" | sed "s/$current_value/$new_value/")
+echo "please wait..."
 
                 echo "$update_line"
                 break

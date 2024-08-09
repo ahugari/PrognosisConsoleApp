@@ -1,11 +1,13 @@
 package core.entity;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Calendar;
 import core.entity.Role;
 import core.infra.middleware.ProcessManager;
+import core.shared.Helpers;
 
 
 public class Patient extends User{
@@ -15,11 +17,11 @@ public class Patient extends User{
         super(Role.PATIENT, email);
     }
     
-    private Date dateOfBirth;
-    public Date getDateOfBirth() {
+    private String dateOfBirth;
+    public String getDateOfBirth() {
         return dateOfBirth;
     }
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -68,47 +70,56 @@ public class Patient extends User{
     public boolean isHIVPositive(){
         return false;
     }
-    public int calculateSurvivalRate(){
-        Date myDate = new Date();
+    public Double calculateSurvivalRate(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Helpers.printError(this.getDateOfBirth());
+            Date myDate = new Date();
         Calendar myCalendar =Calendar.getInstance();
         myCalendar.setTime(myDate);
-        int current_year=Calendar.YEAR;
-        myCalendar.setTime(this.dateOfBirth);
-        int birth_year=Calendar.YEAR;
-        int age= current_year - birth_year;
-        myCalendar.setTime(this.diagnosisDate);
-        int diagnosis_year=Calendar.YEAR;
-        myCalendar.setTime(this.artStartDate);
-        int artstart_year=Calendar.YEAR;
-        int diff =artstart_year - diagnosis_year;
+        Integer current_year=Calendar.YEAR;
+        myCalendar.setTime(sdf.parse(this.dateOfBirth));
+        Integer birth_year=Calendar.YEAR;
+        Integer age= current_year - birth_year;
+        myCalendar.setTime(sdf.parse(this.diagnosisDate));
+        Integer diagnosis_year=Calendar.YEAR;
+        myCalendar.setTime(sdf.parse(this.artStartDate));
+        Integer artstart_year=Calendar.YEAR;
+        Integer diff =artstart_year - diagnosis_year;
         //get lifespan from bash script
-        int lifespan=0;
+        Double lifespan=0.0;
+        Helpers.printError("HELP: CUURENT YEAR" + current_year);
+        Helpers.printError("HELP: DOB" + birth_year);
+        Helpers.printError("HELP: age" + age);
+        Helpers.printError("HELP: diagnosis_year" + diagnosis_year);
         Map<String, String> map = ProcessManager.getLifeExpectancyStats();
         if(map.containsKey(this.countryISO)){
-            lifespan=Integer.parseInt(map.get(this.countryISO));
+            lifespan=Double.parseDouble(map.get(this.countryISO));
+            Helpers.printInfo(lifespan.toString());
         }
-        int life_expectancy=lifespan-age;
+        Helpers.printInfo("HELP:" +age);
+        Double life_expectancy=lifespan-age;
         if (isHIVPositive==true){
             if (isOnART==true){
-               
                 // artstartyear-diagnosisyear determines the number of times you'll apply the 0.9 survival rate chances 
                 // apply log logic maybe
                 
-                life_expectancy=(int)((lifespan-age)*Math.pow(0.9, diff+1));
+                life_expectancy=(Double)((lifespan-age)*Math.pow(0.9, diff+1));
                 return life_expectancy;
             }
             else{
-              life_expectancy=(diagnosis_year+5) - current_year;
+              life_expectancy=(diagnosis_year+5) - Double.parseDouble(current_year.toString());
               return life_expectancy;
             }
-            
-
-            
         }
         
-
-
         return life_expectancy;
+
+        } catch (Exception e) {
+            Helpers.printError("Error while calculating survival rate:" + e.getLocalizedMessage());
+        }
+
+        return -1.0;
     }
     public int modifyProfile(User userUpdate){
         return 0;

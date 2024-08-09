@@ -146,8 +146,6 @@ public class ProcessManager {
           }catch(IllegalArgumentException ex){
             Helpers.printError("Unable to complete login.");
           }
-
-
           Helpers.printInfo("Bash script executed. Returning results...");
 
           return uId.toString();
@@ -236,7 +234,7 @@ public class ProcessManager {
           //   function to start the update profile process
           Process p;
           try {
-            String[] cmdArray = new String[]{"bash", "core/infra/scripts/update_profile.sh", uuid, current_value, new_value};
+            String[] cmdArray = new String[]{"bash", "core/infra/scripts/update_profile.sh", uuid, oldValue, newValue};
     
             Helpers.printInfo("Calling the bash script...");
             ProcessBuilder pb = new ProcessBuilder(cmdArray);
@@ -249,18 +247,14 @@ public class ProcessManager {
             p.waitFor();
     
         Helpers.printInfo("Bash script executed successfully. Returning results....");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        String line;
-        while((line=reader.readLine()) != null) {
-          Helpers.printInfo(line);
-        };
+
     
         return 0;
     
           } catch(IOException | InterruptedException e) {
             Helpers.printError("Could not complete script execution." + e.getLocalizedMessage());
           }
-        return 0;
+        return 1;
     }
     
     public static int findUserByRole(String uuid, Role role){
@@ -382,6 +376,25 @@ public class ProcessManager {
 
       //something went wrong
       return 1;
+    }
+
+    public static void getPatientProfileIncludingLifeSpan(String uuid, Double lifeSpan) {
+      String[] cmdArray = new String[]{"bash", "core/infra/scripts/view_patient_details.sh", uuid, lifeSpan.toString()};
+      try{
+        Helpers.printInfo("Calling bash script...");
+        ProcessBuilder pb = new ProcessBuilder(cmdArray);
+        pb.redirectErrorStream(true);
+        pb.inheritIO();
+        Helpers.printInfo("Executing bash script...");
+        Process p=pb.start();
+        p.waitFor();
+        
+        Helpers.printInfo("Bash script executed. Returning results...");
+        
+
+      }catch(IOException | InterruptedException ex){
+          Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
+      }
     }
 
 }

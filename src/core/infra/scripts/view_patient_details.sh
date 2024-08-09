@@ -8,7 +8,7 @@ if [[ $# -eq 0 ]]; then
 fi
 UUID=$1
 COMP_LIFESPAN=$2
-FILE_PATH="$PWD/infra/data/user-store.txt";
+FILE_PATH="$PWD/core/infra/data/user-store.txt";
 
 # Check if file exists
 if [[ ! -f "$FILE_PATH" ]]; then

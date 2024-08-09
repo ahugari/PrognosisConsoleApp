@@ -82,12 +82,12 @@ public class Main {
                     case 2:
                         //Application login
                         loginUser();
-                        break;
+                        return;
 
                     case 3:
                         //profile registration
                         completeProfileRegistration();
-                        break;
+                        return;
 
                     case 0:
                         //application exit
@@ -310,28 +310,27 @@ public class Main {
     }
     private static void showPatientUI(String loginUserId){
     String rawUser = ProcessManager.findUser(loginUserId);
-    Helpers.printInfo("yeah" +rawUser);
-    User user = convertRawUserIntoUser(rawUser);
-    while (true) {
+    // Helpers.printInfo(rawUser);
+    Patient patient = convertRawUserIntoPatient(rawUser);
         Helpers.printLine();
         Helpers.printMessage("Choose an option:");
-
         Helpers.printOption(1, "View Profile");
         Helpers.printOption(2, "Edit Profile");
         Helpers.printOption(0, "Exit");
         Helpers.printLine();
 
-        int userInput = Integer.parseInt(input.nextLine());
+        int patientInput = Integer.parseInt(input.nextLine());
 
-        switch (userInput) {
+        switch (patientInput) {
             case 1:
-                //TODO: read user
-                ProcessManager.getLifeExpectancyStats();
-                break;
+                Double lifeSpan = patient.calculateSurvivalRate();
+                // Helpers.printInfo("LIFESPAN:" + lifeSpan.toString());
+                ProcessManager.getPatientProfileIncludingLifeSpan(patient.getUuid(), lifeSpan);
+                return;
 
             case 2:
                 //TODO: edit user
-                showEditPatientMenu(user);
+                showEditPatientMenu(patient.getUuid());
 
                 return;
 
@@ -344,10 +343,47 @@ public class Main {
                 Helpers.printError("Unknown option. Exiting application...");
                 return;
             }
-        }
     }
 
-    private static User convertRawUserIntoUser(String rawUser){
+
+    private static Patient convertRawUserIntoPatient(String rawUser){
+        String[] userArray = rawUser.split(",");
+        // Helpers.printInfo(userArray[0]);
+        Map<String, String> userAttributes = new HashMap<>();
+        for (String attribute : userArray) {
+            var attr = attribute.trim().split(":");
+            // Helpers.printInfo(attribute.toString());
+            // Helpers.printInfo(attr[0].toString());
+            // Helpers.printInfo(attr[1].toString());
+            userAttributes.put(attr[0].trim(), attr[1].trim());
+        }
+
+        String role = userAttributes.get("role");
+        Helpers.printInfo(role);
+
+            try{
+                Patient patient = new Patient(userAttributes.get("email"));
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                patient.setArtStartDate(sdf.format(sdf.parse(userAttributes.get("ARTStartDate"))));
+                patient.setCountryISO(userAttributes.get("countryISO"));
+                patient.setEmail(userAttributes.get("email"));
+                patient.setDateOfBirth(sdf.format(sdf.parse(userAttributes.get("dob"))));
+                patient.setDiagnosisDate(sdf.format(sdf.parse(userAttributes.get("diagnosisDate"))));
+                patient.setLastName(userAttributes.get("email"));
+                patient.setOnART("true".equals(userAttributes.get("isOnART")));
+                patient.setFirstName(userAttributes.get("firstName"));
+                patient.setPassword(userAttributes.get("lastName"));
+                patient.setUuid(userAttributes.get("uuid"));
+                patient.setHIVPositive("true".equals(userAttributes.get("isHIVPositive")));
+                return patient;
+            }catch(Exception ex){
+                Helpers.printError(ex.getLocalizedMessage());
+            }
+
+        return null;
+    }
+
+    private static User convertRawUserIntoAdmin(String rawUser){
         String[] userArray = rawUser.split(",");
         Helpers.printInfo(userArray[0]);
         Map<String, String> userAttributes = new HashMap<>();
@@ -390,22 +426,24 @@ public class Main {
 
         return null;
     }
-    private static void showEditPatientMenu(User user) {
+    private static void showEditPatientMenu(String uuid) {
         // TODO Auto-generated method study
-        //placeholder content
-        Patient patient = (Patient)ProcessManager.viewUser("");
+    String rawUser = ProcessManager.findUser(uuid);
+    //placeholder content
+        Patient patient = convertRawUserIntoPatient(rawUser);
         // UUID,email,role,isProfileComplete,firstName,lastName,hashed_password,userId,dateOfBirth,isHIVPositive,diagnosisDate,isOnART,ARTStartDate,countryISO
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Helpers.printMessage("Choose a field to edit:");
-        Helpers.printOption(1, "First Name:"+ patient.getFirstName());
-        Helpers.printOption(2, "Last Name"+ patient.getLastName());
-        Helpers.printOption(3, "Email" + patient.getEmail());
-        Helpers.printOption(4, "Date of Birth" + patient.getDateOfBirth());
-        Helpers.printOption(5, "Is HIV Positive?" + patient.getHIVPositive());
-        Helpers.printOption(6, "Diagnosis Date" + patient.getDiagnosisDate());
-        Helpers.printOption(7, "Is on ART?" + patient.isOnART());
-        Helpers.printOption(8, "ART Start Date" + patient.getArtStartDate());
-        Helpers.printOption(9, "Country");
+        Helpers.printOption(1, "First Name: "+ patient.getFirstName());
+        Helpers.printOption(2, "Last Name: "+ patient.getLastName());
+        Helpers.printOption(3, "Email: " + patient.getEmail());
+        Helpers.printOption(4, "Date of Birth: " + patient.getDateOfBirth());
+        Helpers.printOption(5, "Is HIV Positive?: " + patient.getHIVPositive());
+        Helpers.printOption(6, "Diagnosis Date: " + patient.getDiagnosisDate());
+        Helpers.printOption(7, "Is on ART?: " + patient.isOnART());
+        Helpers.printOption(8, "ART Start Date: " + patient.getArtStartDate());
+        Helpers.printOption(9, "Country: "+ patient.getCountryISO());
+        Helpers.printOption(0, "Exit");
         Helpers.printLine();
                 
         int userInput = Integer.parseInt((input.nextLine()));
@@ -420,6 +458,11 @@ public class Main {
                     Helpers.printUserFieldPrompt("first name");
                     ProcessManager.editUser(patient.getUuid(), patient.getFirstName(), input.nextLine());
                     break;
+
+                    case 0:
+                    //application exit
+                    Helpers.printInfo("Goodbye :)!");
+                    return;
             default:
                 break;
         }
