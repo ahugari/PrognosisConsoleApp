@@ -2,7 +2,11 @@ package core.entity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
+import java.util.Calendar;
 import core.entity.Role;
+import core.infra.middleware.ProcessManager;
+
 
 public class Patient extends User{
     
@@ -11,11 +15,11 @@ public class Patient extends User{
         super(Role.PATIENT, email);
     }
     
-    private String dateOfBirth;
-    public String getDateOfBirth() {
+    private Date dateOfBirth;
+    public Date getDateOfBirth() {
         return dateOfBirth;
     }
-    public void setDateOfBirth(String dateOfBirth) {
+    public void setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -64,8 +68,47 @@ public class Patient extends User{
     public boolean isHIVPositive(){
         return false;
     }
-    public float calculateSurvivalRate(){
-        return 0;
+    public int calculateSurvivalRate(){
+        Date myDate = new Date();
+        Calendar myCalendar =Calendar.getInstance();
+        myCalendar.setTime(myDate);
+        int current_year=Calendar.YEAR;
+        myCalendar.setTime(this.dateOfBirth);
+        int birth_year=Calendar.YEAR;
+        int age= current_year - birth_year;
+        myCalendar.setTime(this.diagnosisDate);
+        int diagnosis_year=Calendar.YEAR;
+        myCalendar.setTime(this.artStartDate);
+        int artstart_year=Calendar.YEAR;
+        int diff =artstart_year - diagnosis_year;
+        //get lifespan from bash script
+        int lifespan=0;
+        Map<String, String> map = ProcessManager.getLifeExpectancyStats();
+        if(map.containsKey(this.countryISO)){
+            lifespan=Integer.parseInt(map.get(this.countryISO));
+        }
+        int life_expectancy=lifespan-age;
+        if (isHIVPositive==true){
+            if (isOnART==true){
+               
+                // artstartyear-diagnosisyear determines the number of times you'll apply the 0.9 survival rate chances 
+                // apply log logic maybe
+                
+                life_expectancy=(int)((lifespan-age)*Math.pow(0.9, diff+1));
+                return life_expectancy;
+            }
+            else{
+              life_expectancy=(diagnosis_year+5) - current_year;
+              return life_expectancy;
+            }
+            
+
+            
+        }
+        
+
+
+        return life_expectancy;
     }
     public int modifyProfile(User userUpdate){
         return 0;

@@ -276,12 +276,13 @@ public class ProcessManager {
     }
 
     public static Map<String, String> getLifeExpectancyStats(){
+      Process p;
       Map<String,String> statsMap = new HashMap<>();
       try{
         String[] cmdArray = new String[]{"bash", "core/infra/scripts/life_expectancy.sh"};
         ProcessBuilder pb = new ProcessBuilder(cmdArray);
         pb.redirectErrorStream(true);
-        Process p=pb.start();
+        p=pb.start();
         p.waitFor();
         
         while(p.inputReader().ready()){
@@ -300,6 +301,7 @@ public class ProcessManager {
       return statsMap;
     }
 
+	
     public static int verifyCountryISO(String isoCode){
       Process p;
     

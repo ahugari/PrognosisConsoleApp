@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import core.entity.Admin;
 import core.entity.Patient;
@@ -440,6 +442,7 @@ public class Main {
             Helpers.printError("Failed to create user reports: " + ex.getLocalizedMessage());            
         }
     }
+    
     private static void initiateNewUser(){
             User newUser;
 
@@ -486,6 +489,7 @@ public class Main {
         }
         return null;
     }
+    
     private static File createUserAnalyticsReport(){
         String filePath = "core/infra/resources/userAnalytics.csv";
         File userData = new File(filePath);
