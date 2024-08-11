@@ -103,9 +103,10 @@ public class Patient extends User{
             if (isOnART==true){
                 // artstartyear-diagnosisyear determines the number of times you'll apply the 0.9 survival rate chances 
                 // apply log logic maybe
-                
-                life_expectancy=(Double)((lifespan-age)*Math.pow(0.9, diff+1));
-                return life_expectancy;
+                double life = (life_expectancy * 0.9);
+                for(double i= diagnosis_year;i<artstart_year;i++)
+                    life*=0.9;
+                return life;
             }
             else{
               life_expectancy=(diagnosis_year+5) - Double.parseDouble(current_year.toString());
