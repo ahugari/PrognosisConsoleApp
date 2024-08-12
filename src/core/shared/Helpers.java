@@ -1,6 +1,7 @@
 package core.shared;
 
 import java.io.Console;
+import java.text.MessageFormat;
 
 public class Helpers {
     public static void printInfo(String message){
@@ -9,11 +10,46 @@ public class Helpers {
     public static void printError(String message){
         print(message, "Error:");
     }
+    public static void printLargeSpace(){
+        System.out.println("");
+        System.out.println("");
+        System.out.println("");
+        System.out.println("");
+        System.out.println("");
+
+    }
     public static void printLine(){
-        print("-----------------------------------------",null);
+        print("------------------------------------------------------------------------------------",null);
+    }
+    public static void printHeader(String message){
+        printLine();
+        printLine();
+        System.out.printf(MessageFormat.format("\t\t\t{0}\n", message));
+        printLine();
     }
     public static void printMessage(String message){
         print(message, null);
+    }
+    public static void print1OptionFooter(String option1){
+        printLargeSpace();
+        printLine();
+        System.out.printf(MessageFormat.format("\t\t\t\t\t\t\t\t\t{0}\n", option1));
+        printLine();
+        printLine();
+    }
+    public static void print2OptionFooter(String option1, String option2 ){
+        printLargeSpace();
+        printLine();
+        System.out.printf(MessageFormat.format("\t\t\t\t\t\t\t{0}\t{1}\n", option1, option2));
+        printLine();
+        printLine();
+    }
+    public static void print3OptionFooter(String option1, String option2, String option3 ){
+        printLargeSpace();
+        printLine();
+        System.out.printf(MessageFormat.format("{0}\t\t\t\t\t\t{1}\t{2}\n", option1, option2, option3));
+        printLine();
+        printLine();
     }
     public static void printOption(int optionNumber, String optionMessage){
         print(optionNumber + ")" + " "+ optionMessage,null);
@@ -22,7 +58,7 @@ public class Helpers {
         print("Choose an option to continue or enter '0' to close the app.", null);
     }
     public static void printUserFieldPrompt(String fieldRequired){
-        print("Enter your " + fieldRequired + " to continue...", null);
+        print("Enter your " + fieldRequired + " to continue:", null);
     }
 
     

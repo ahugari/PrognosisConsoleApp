@@ -40,14 +40,14 @@ public class ProcessManager {
           String line;
           while((line=reader.readLine()) != null){
               Helpers.printInfo(line);
-          };
-          return 1;
+          }
+          return 0;
 
       }catch(IOException | InterruptedException ex){
           Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
       }
 
-      return 0;
+      return 1;
     }
 
     public static int registerPatient(Patient patient){
@@ -135,6 +135,7 @@ public class ProcessManager {
           Helpers.printInfo("Executing bash script...");
           p=pb.start();
           p.waitFor();
+          Helpers.printInfo("Bash script executed. Returning results...");
           
           UUID uId=null;
           try{
@@ -143,12 +144,11 @@ public class ProcessManager {
             if(rs != null){
               uId = UUID.fromString(rs);
             }
+            return uId.toString();
           }catch(IllegalArgumentException ex){
             Helpers.printError("Unable to complete login.");
           }
-          Helpers.printInfo("Bash script executed. Returning results...");
-
-          return uId.toString();
+          return null;
 
       }catch(IOException | InterruptedException ex){
           Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
@@ -157,7 +157,7 @@ public class ProcessManager {
       return null;
   }
 
-    public static String findUser(String uuid){
+    public static String getUserProfileAsString(String uuid){
       String[] cmdArray = new String[]{"bash", "core/infra/scripts/find_user.sh", uuid};
       try{
         Helpers.printInfo("Calling bash script...");
@@ -179,7 +179,7 @@ public class ProcessManager {
 
     public static User viewUser(String uuid){
       //TODO: implement view user
-      findUser(uuid);
+      getUserProfileAsString(uuid);
 
       //return this as a plceholder
       return new Patient("");
