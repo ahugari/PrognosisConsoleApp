@@ -221,17 +221,17 @@ public class Main {
         }
 
         Helpers.printUserFieldPrompt("firstname");
-        String firstname = input.nextLine();
+        String firstname = input.next();
 
         Helpers.printUserFieldPrompt("lastname");
-        String lastname = input.nextLine();
+        String lastname = input.next();
 
         Helpers.printUserFieldPrompt("password");
-        String password = input.nextLine();
+        String password = input.next();
 
         Helpers.printUserFieldPrompt("date of birth (YYYY-MM-DD)");
         try{
-            dateOfBirth = dateFormat.format(dateFormat.parse(input.nextLine()));
+            dateOfBirth = dateFormat.format(dateFormat.parse(input.next()));
         } catch (ParseException ex) {
             Helpers.printError("Invalid date format entered: " + ex.getLocalizedMessage());
         } 
@@ -240,7 +240,7 @@ public class Main {
         Helpers.printOption(2, "N0");
         Helpers.printUserOptionPrompt();
 
-        Integer isHIVPositive = Integer.parseInt(input.nextLine());
+        Integer isHIVPositive = Integer.parseInt(input.next());
 
         String artStartDate = "";
         String diagnosisDate = "";
@@ -250,18 +250,18 @@ public class Main {
             Helpers.printUserFieldPrompt("diagnosis date (YYYY-MM-DD)");
 
             try {
-                diagnosisDate = dateFormat.format(dateFormat.parse(input.nextLine()));
+                diagnosisDate = dateFormat.format(dateFormat.parse(input.next()));
     
                 Helpers.printMessage("Are you on ART treatment?");
                 Helpers.printOption(1, "Yes");
                 Helpers.printOption(2, "No");
                 Helpers.printUserOptionPrompt();
     
-                isOnART = Integer.parseInt(input.nextLine());
+                isOnART = Integer.parseInt(input.next());
     
                 if (isOnART == 1) {
                     Helpers.printUserFieldPrompt("ART Start date (YYYY-MM-DD)");
-                    artStartDate = dateFormat.format(dateFormat.parse(input.nextLine()));
+                    artStartDate = dateFormat.format(dateFormat.parse(input.next()));
                 }
             } catch (ParseException ex) {
                 Helpers.printError("Invalid date format entered: " + ex.getLocalizedMessage());
@@ -272,7 +272,7 @@ public class Main {
 
         Helpers.printUserFieldPrompt("Country ISO (e.g., US, UK)");
 
-        String countryISO = input.nextLine();
+        String countryISO = input.next();
 
         Patient patient = new Patient(userEmail);
         patient.setArtStartDate(artStartDate);
@@ -493,12 +493,12 @@ public class Main {
         switch (userInput) {
             case 1:
                 Helpers.printOption(1, "Capture new first name");
-                ProcessManager.editUser(patient.getUuid(), patient.getFirstName(), input.nextLine());
+                ProcessManager.editUser(patient.getUuid(), patient.getFirstName(), input.next());
                 break;
         
                 case 2:
                     Helpers.printUserFieldPrompt("first name");
-                    ProcessManager.editUser(patient.getUuid(), patient.getFirstName(), input.nextLine());
+                    ProcessManager.editUser(patient.getUuid(), patient.getFirstName(), input.next());
                     break;
 
                 case 0:
