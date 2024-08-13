@@ -1,9 +1,9 @@
 #!/bin/bash
 
-source ./core/infra/scripts/find_user.sh
-# USER_STORE="$HOME/PrognosisConsoleApp/src/core/infra/data/user-store.txt"
+source $HOME/PrognosisConsoleApp/src/core/infra/scripts/lookup_user.sh
+USER_STORE="$HOME/PrognosisConsoleApp/src/core/infra/data/user-store.txt"
 # "$PWD/core/infra/data/user-store.txt" ---> Make sure to change the path
-USER_STORE="$PWD/core/infra/data/user-store.txt"
+# USER_STORE="$PWD/core/infra/data/user-store.txt"
 
 function update_profile() {
     local uuid="$1"
@@ -80,4 +80,4 @@ echo "please wait..."
     
 }
 
-patient_update_profile "$1" "$2" "$3" 
+update_profile "$1" "$2" "$3" 
