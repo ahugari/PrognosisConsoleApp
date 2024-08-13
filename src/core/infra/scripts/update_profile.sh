@@ -19,7 +19,7 @@ function update_profile() {
         echo "Error:: User with the UUID $uuid not found"
         return 1
     fi
-echo "please wait..."
+# echo "please wait..."
     # track the line number for the user data
     local line_number=0
     local update_line=""
@@ -27,10 +27,10 @@ echo "please wait..."
     # find the user's line number in the file 
     while IFS="," read -r uUID stored_email role isProfileComplete firstName lastName stored_password userId dateOfBirth isHIVPositive diagnosisDate isOnART ARTStartDate countryISO; do 
         ((line_number++))
-echo "please wait..."
+# echo "please wait..."
 
         if [[ "$uuid" == "$uUID" ]]; then
-echo "please wait..."
+# echo "please wait..."
 
             if [[ 
                 "$stored_email" == "$current_value" || 
@@ -43,13 +43,13 @@ echo "please wait..."
                 "$ARTStartDate" == "$current_value" ||
                 "$countryISO" == "$current_value" 
                  ]]; then
-echo "please wait..."
+# echo "please wait..."
 
             # NOTE: do we enable users to update their passwords? If so, how to we handle that since the password is encrypted and we don't know the data parsed is for password so we encrypt before checking?
                 update_line=$(echo "$user_data" | sed "s/$current_value/$new_value/")
-echo "please wait..."
+# echo "please wait..."
 
-                echo "$update_line"
+                # echo "$update_line"
                 break
             else 
                 echo "Error:: Current value $current_value was not found in the user data"

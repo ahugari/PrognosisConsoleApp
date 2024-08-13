@@ -11,6 +11,7 @@ import core.infra.middleware.ProcessManager;
 import core.shared.Helpers;
 
 
+@SuppressWarnings("unused")
 public class Patient extends User{
     
 

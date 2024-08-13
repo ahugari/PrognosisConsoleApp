@@ -24,6 +24,7 @@ import core.entity.UserManager;
 import core.infra.middleware.ProcessManager;
 import core.shared.Helpers;
 
+@SuppressWarnings("unused")
 public class Main {
     private static boolean isLoggedIn = false;
     private static Role currentUserRole;
@@ -375,11 +376,55 @@ public class Main {
         switch (patientInput) {
             case 1:
                 Double lifeSpan = patient.calculateSurvivalRate();
-                Helpers.printHeader("Patient");
-                ProcessManager.getPatientProfileIncludingLifeSpan(patient.getUuid(), lifeSpan);
+                Helpers.printHeader("Patient Profile Details");
+                String[] profileData = ProcessManager.getPatientProfileIncludingLifeSpan(patient.getUuid(), lifeSpan);
+
+                final String RESET = "\u001B[0m";
+                final String BLUE = "\u001B[34m";
+                final String BOLD = "\u001B[1m";
+
+                if (profileData != null && profileData.length >= 11) {
+                    String email = profileData[0];
+                    String role = profileData[1];
+                    String firstName = profileData[3];
+                    String lastName = profileData[4];
+                    String dateOfBirth = profileData[6];
+                    String hivStatus = profileData[7].equals("true") ? "Positive" : "Negative";
+                    String diagnosisDate = profileData[8];
+                    String onART = profileData[9].equals("true") ? "Yes" : "No";
+                    String artStartDate = profileData[10];
+                    String remainingLifeSpan = profileData[11];
+
+                    // Format the output
+                    System.out.println(BOLD + BLUE + "Name: "+ RESET  + firstName + " " + lastName);
+                    System.out.println();
+                    System.out.println(BOLD + BLUE + "Email: "+ RESET + email);
+                    System.out.println();
+                    System.out.println(BOLD + BLUE + "Role: " + RESET + role);
+                    System.out.println();
+                    System.out.println(BOLD + BLUE + "Date of Birth: " + RESET  + dateOfBirth);
+                    System.out.println();
+                    System.out.println(BOLD + BLUE + "HIV Status: " + RESET + hivStatus);
+                    System.out.println();
+                    if (hivStatus.equals("Positive")) {
+                        System.out.println(BOLD + BLUE + "Diagnosis Date: " + RESET + diagnosisDate);
+                        System.out.println();
+                        System.out.println(BOLD + BLUE + "On ART: " + RESET + onART);
+                        System.out.println();
+                        if (onART.equals("Yes")) {
+                            System.out.println(BOLD + BLUE + "ART Start Date: " + RESET + artStartDate);
+                            System.out.println();
+                        }
+                    }
+                    System.out.println(BOLD + BLUE + "Remaining Life Span: " + RESET + remainingLifeSpan + " years");
+                } else {
+                    Helpers.printError("Unexpected script output format.");
+                }
+
                 Helpers.print3OptionFooter("99) to go back","0) to logout","9) to exit");
                 int viewPatientInput = Integer.parseInt(input.next());
-                    return viewPatientInput;
+                return viewPatientInput;
+
 
             case 2:
                 return showEditPatientMenu(patient.getUuid());
@@ -473,7 +518,7 @@ public class Main {
     }
 
     private static Integer showEditPatientMenu(String uuid) {
-         String rawUser = ProcessManager.getUserProfileAsString(uuid);
+        String rawUser = ProcessManager.getUserProfileAsString(uuid);
         Patient patient = convertRawUserIntoPatient(rawUser);
         // UUID,email,role,isProfileComplete,firstName,lastName,hashed_password,userId,dateOfBirth,isHIVPositive,diagnosisDate,isOnART,ARTStartDate,countryISO
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -496,12 +541,57 @@ public class Main {
                 ProcessManager.editUser(patient.getUuid(), patient.getFirstName(), input.next());
                 break;
         
-                case 2:
-                    Helpers.printUserFieldPrompt("first name");
-                    ProcessManager.editUser(patient.getUuid(), patient.getFirstName(), input.next());
-                    break;
+            case 2:
+                Helpers.printUserFieldPrompt("Capture new last name");
+                ProcessManager.editUser(patient.getUuid(), patient.getLastName(), input.next());
+                break;
+            
+            case 3:
+                Helpers.printUserFieldPrompt("Capture new Date of Birth");
+                ProcessManager.editUser(patient.getUuid(), patient.getDateOfBirth(), input.next());
+                break;
 
-                case 0:
+            case 4:
+                Helpers.printUserFieldPrompt("Capture new HIV Status");
+                Helpers.printOption(1, "Yes");
+                Helpers.printOption(2, "N0");
+                String hivStatusString = Boolean.toString(patient.getHIVPositive());
+                int option = input.nextInt();
+                boolean hivStatus = false;
+                if (option == 1) {
+                     hivStatus = true;
+                } else if (option == 2) {
+                    hivStatus = false;
+                }
+                ProcessManager.editUser(patient.getUuid(), hivStatusString, Boolean.toString(hivStatus));
+                break;
+            case 5:
+                Helpers.printUserFieldPrompt("Capture new Diagnosis Date");
+                ProcessManager.editUser(patient.getUuid(), patient.getDiagnosisDate(), input.next());
+                break;
+            case 6:
+                Helpers.printUserFieldPrompt("Capture new ART Status");
+                Helpers.printOption(1, "Yes");
+                Helpers.printOption(2, "N0");
+                String artStatusString = Boolean.toString(patient.isOnART());
+                int artOption = input.nextInt();
+                boolean artStatus = false;
+                if (artOption == 1) {
+                    artStatus = true;
+                } else if (artOption == 2) {
+                    artStatus = false;
+                }
+                ProcessManager.editUser(patient.getUuid(), artStatusString, Boolean.toString(artStatus));
+                break;
+            case 7:
+                Helpers.printUserFieldPrompt("Capture new ART Start Date");
+                ProcessManager.editUser(patient.getUuid(), patient.getArtStartDate(), input.next());
+                break;
+            case 8:
+                Helpers.printUserFieldPrompt("Capture new Country ISO(RWA)");
+                ProcessManager.editUser(patient.getUuid(), patient.getCountryISO(), input.next());
+                break;
+            case 0:
                 //application exit
                 Helpers.printInfo("Goodbye :)!");
                 return userInput;
