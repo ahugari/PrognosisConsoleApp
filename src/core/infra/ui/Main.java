@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.UUID;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -25,70 +26,62 @@ import core.shared.Helpers;
 
 public class Main {
     private static boolean isLoggedIn = false;
-    private static Role userRole;
+    private static Role currentUserRole;
     private static Scanner input = new Scanner(System.in);
 
     public static void main(String[] args){
+        boolean showStartMenu = true;
+        while (showStartMenu) {
+        showStartMenu= false;
+        Helpers.printHeader("Welcome to the Life Prognosis Application");
+        Helpers.printMessage("Let's get started. What would you like to do?");
+        Helpers.printOption(1, "Login");
+        Helpers.printOption(2, "Complete Profile Registration");
+        Helpers.print1OptionFooter("0) to exit");
 
-        Helpers.printLine();
-        Helpers.printMessage("Welcome to the Life Prognosis Application");
-        Helpers.printLine();
-
-        Helpers.printMessage("Let's get started. What is your role?");
-        Helpers.printOption(1, "Patient");
-        Helpers.printOption(2, "Admin");
-        Helpers.printOption(0, "Exit");
-        Helpers.printLine();
-
-        try{
-            int roleInput = Integer.parseInt(input.nextLine());
-            switch (roleInput) {
-                case 1:
-                    userRole = Role.PATIENT;
-                    break;
-
-                case 2:
-                    userRole = Role.ADMIN;
-                    break;
-
-                case 0:
-                    Helpers.printInfo("Goodbye :)!");
-                    return;
-
-                default:
-                    Helpers.printError("Unknown role. Exiting application...");
-                    return;
-            }
-
-            while (true) {
-                Helpers.printLine();
-                Helpers.printMessage("Choose an option:");
-
-                // if(userRole == Role.ADMIN) {
-                    // }
-
-                Helpers.printOption(2, "Login");
-                Helpers.printOption(3, "Complete Profile Registration");
-                Helpers.printOption(0, "Exit");
-                Helpers.printLine();
-
-                int userInput = Integer.parseInt(input.nextLine());
-
+            try{
+                String in = input.next();
+                int userInput = Integer.parseInt(in);
                 switch (userInput) {
                     case 1:
-                    //registering new user
-                        //TODO: might not need this after refactoring
+                        //Application login
+                        String loginResult = loginUser();
+                        if(loginResult!=null){
+                            try{
+                               UUID userId =UUID.fromString(loginResult);
+                               Integer interactionResult = showUIAfterLogin(userId);
+                               if(interactionResult==0){
+                                showStartMenu=true;
+                               }else if(interactionResult==9){
+                                //exit application
+                                return;
+                               }
+                               if(isLoggedIn){
+                                logoutUser();
+                               }
+                            }catch (IllegalArgumentException ex){
+                                 Helpers.printInfo("Login failed. Returning to Start menu.");
+                                 break;   
+                            }
+                        }else{
+                            showStartMenu=true;
+                            break;
+                        }
                         break;
 
                     case 2:
-                        //Application login
-                        loginUser();
-                        return;
-
-                    case 3:
                         //profile registration
-                        completeProfileRegistration();
-                        return;
+                        Integer registrationResult = completeProfileRegistration();
+                        if(registrationResult == -1) {
+                            //exit application
+                            Helpers.printInfo("Goodbye :)!");
+                            return;
+                        }else if(registrationResult == 00){
+                            //display start menu
+                            break;
+                        }
+                        //if anything failed or everything went well we display the menu again
+                        break;
 
                     case 0:
                         //application exit
@@ -97,67 +90,124 @@ public class Main {
 
                     default:
                         Helpers.printError("Unknown option. Exiting application...");
-                        return;
-                    }
+                        break;
                 }
-        } catch (NumberFormatException e) {
-            Helpers.printError("Wrong input value. Application exiting...");
-        } catch (Exception ex){
-            Helpers.printError("An error occured while processing your input: " + ex.getLocalizedMessage());
+            } catch (NumberFormatException e) {
+                Helpers.printError("Wrong input value. Application exiting...");
+                showStartMenu=true;
+            } catch (Exception ex){
+                Helpers.printError("An error occurred while processing your input: " + ex.getLocalizedMessage());
+            }
         }
-
     }
 
-    private static void loginUser(){
-        Helpers.printLine();
-        Helpers.printMessage("Logging into the Application");
-        Helpers.printLine();
+    private static void logoutUser() {
+        isLoggedIn= false;
+        currentUserRole=null;
+    }
+
+    private static Integer showUIAfterLogin(UUID userId) {
+        if(currentUserRole == Role.PATIENT){
+            //todo
+            Integer interationResult = showPatientUI(userId.toString());
+            //if back option is selected, show menu again
+            while(interationResult==99)
+            {
+                interationResult = showPatientUI(userId.toString());
+            }
+            //all other options are sent to method caller
+            return interationResult;
+        }else if (currentUserRole == Role.ADMIN){
+            Integer interactionResult = showAdminUI(userId.toString());
+            //if back option is selected, show menu again
+            while(interactionResult==99){
+                interactionResult = showAdminUI(userId.toString());
+            }
+            //all other options are sent to method caller
+            return interactionResult;
+        }
+            return 9;
+    }
+
+    private static String loginUser(){
+        Helpers.printHeader("Logging into the Application");
 
         String loginEmail = setInputfromScanner(input, "email");
+        while(loginEmail.trim().equals("0")||loginEmail.isBlank()){
+            loginEmail = setInputfromScanner(input, "email");
+        }
         String userPassword = setInputfromScanner(input, "password");
+        while(userPassword.equals("0") || userPassword.isBlank()){
+            userPassword = setInputfromScanner(input, "password");
+        }
 
         Helpers.printInfo("Logging you in...");
 
         String loginUserId = ProcessManager.login(loginEmail, userPassword);
+
+        if(loginUserId == null) return null;
+
+        isLoggedIn=true;
+        String userProfileAsString = ProcessManager.getUserProfileAsString(loginUserId);
+        Role userRole = getRoleFromUserStringProfile(userProfileAsString);
+        isLoggedIn = true;
+        currentUserRole = userRole; 
+        Helpers.printMessage("User logged in successfully.");
+
+        return loginUserId;
         
-        if(loginUserId!=null)
-        {
-            Helpers.printMessage("User logged in successfully.");
-            if(userRole == Role.PATIENT){
-                showPatientUI(loginUserId);
-            }else if (userRole == Role.ADMIN){
-                showAdminUI(loginUserId);
-            }                     
-        }
     }
 
-    private static void completeProfileRegistration(){
-        Helpers.printLine();
-        Helpers.printMessage("Complete Profile Registration");
-        Helpers.printLine();
+    private static Role getRoleFromUserStringProfile(String userProfileAsString) {
+        String[] userArray = userProfileAsString.split(",");
+        Map<String, String> userAttributes = new HashMap<>();
+        for (String attribute : userArray) {
+            var attr = attribute.trim().split(":");
+            userAttributes.put(attr[0].trim(), attr[1].trim());
+        }
+        return Role.valueOf(userAttributes.get("role"));
+    }
+
+    private static int completeProfileRegistration(){
+        Helpers.printHeader("Complete Profile Registration");
 
         boolean validationResult =false;
         String uuid = "";
         String userEmail = "";
         while(!validationResult){
             userEmail= setInputfromScanner(input,"email");
+            if(userEmail.equals("0")){
+                //exit app
+                return -1;
+            }else if(userEmail.equals("00")){
+                //display start menu
+                return 00;
+            }
             uuid= setInputfromScanner(input, "uuid");
-            if(!uuid.isEmpty() && !userEmail.isEmpty()){
+            if(uuid.equals("0")){
+                //exit app
+                return -1;
+            }else if(userEmail.equals("00")){
+                //display start menu
+                return 00;
+            }
+            if(!uuid.trim().isEmpty() && !userEmail.trim().isEmpty()){
                 validationResult =true;
             }
         }
         
-        if (userRole == Role.PATIENT) {
+        if (currentUserRole == Role.PATIENT) {
             completePatientRegistration(uuid, userEmail);
-        } else if (userRole == Role.ADMIN) {
+        } else if (currentUserRole == Role.ADMIN) {
             completeAdminRegistration(uuid, userEmail);
         }
+        return 0;
     }
 
     private static void completePatientRegistration(String uuid, String userEmail){
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); 
         String dateOfBirth = "";
-        int findResult = ProcessManager.findUserByRole(uuid, userRole);
+        int findResult = ProcessManager.findUserByRole(uuid, currentUserRole);
 
         if( findResult == 1){
             //since script's normal execution result is 0, we check for 1 as the result
@@ -166,7 +216,7 @@ public class Main {
             Helpers.printInfo("Registration completion not available for provided user details.");
             return;
         }else{
-            Helpers.printInfo("Something went wrong with while veriying user profile");
+            Helpers.printInfo("Something went wrong with while verifying user profile");
             return;
         }
 
@@ -244,7 +294,7 @@ public class Main {
     }
 
     private static void completeAdminRegistration(String uuid, String userEmail){
-        String findResult = ProcessManager.findUser(uuid);
+        String findResult = ProcessManager.getUserProfileAsString(uuid);
 
         if(findResult==null){
                 Helpers.printInfo("Could not verify user.");
@@ -270,93 +320,86 @@ public class Main {
         String inputFromScanner = "";
         while (inputFromScanner.isBlank()) {
             Helpers.printUserFieldPrompt(fieldName);
-            inputFromScanner= input.nextLine();
+            inputFromScanner= input.next();
         }
         return inputFromScanner;
     }
 
-    private static void showAdminUI(String loginUserId){
-        if(userRole != Role.ADMIN) {
-            return;
+    private static Integer showAdminUI(String loginUserId){
+        Helpers.printMessage("User Role:" + currentUserRole);
+
+        if(currentUserRole != Role.ADMIN) {
+            return 9;
         }
-        Helpers.printLine();
-        Helpers.printMessage("Choose an option:");
+        Helpers.printHeader("Choose an option:");
 
         Helpers.printOption(1, "Register New User");
         Helpers.printOption(2, "Download User Reports");
+        
+        Helpers.print2OptionFooter("0) to logout","9) to exit");
 
-        Helpers.printOption(0, "Logout");
-        Helpers.printLine();
+        int adminInput = Integer.parseInt(input.next());
 
-        int userInput = Integer.parseInt(input.nextLine());
-
-        switch (userInput) {
+        switch (adminInput) {
             case 1:
-                initiateNewUser();
-                break;
+                return initiateNewUser();
             case 2:
-                createUserReports();
-                break;
+                return createUserReports();
             case 0:
                 //application exit
+                Helpers.printInfo("Logging you out...");
+                return 00;
+            case 9:
+                //application exit
                 Helpers.printInfo("Goodbye :)!");
-
-                return;
+                return 9;
             default:
             Helpers.printError("Unknown option. Exiting application...");
-
-            return;
+            break;
         }
-
+        return 9;
     }
-    private static void showPatientUI(String loginUserId){
-    String rawUser = ProcessManager.findUser(loginUserId);
+    
+    private static Integer showPatientUI(String loginUserId){
+    String rawUser = ProcessManager.getUserProfileAsString(loginUserId);
     // Helpers.printInfo(rawUser);
     Patient patient = convertRawUserIntoPatient(rawUser);
-        Helpers.printLine();
-        Helpers.printMessage("Choose an option:");
+        Helpers.printHeader("Choose an option:");
         Helpers.printOption(1, "View Profile");
         Helpers.printOption(2, "Edit Profile");
-        Helpers.printOption(0, "Logout");
-        Helpers.printLine();
+        Helpers.print2OptionFooter("0) to logout","9) to exit");
 
-        int patientInput = Integer.parseInt(input.nextLine());
+
+        int patientInput = Integer.parseInt(input.next());
 
         switch (patientInput) {
             case 1:
                 Double lifeSpan = patient.calculateSurvivalRate();
-                // Helpers.printError(lifeSpan.toString());
-                // Helpers.printInfo("LIFESPAN:" + lifeSpan.toString());
+                Helpers.printHeader("Patient");
                 ProcessManager.getPatientProfileIncludingLifeSpan(patient.getUuid(), lifeSpan);
-                return;
+                Helpers.print3OptionFooter("99) to go back","0) to logout","9) to exit");
+                int viewPatientInput = Integer.parseInt(input.next());
+                    return viewPatientInput;
 
             case 2:
-                //TODO: edit user
-                showEditPatientMenu(patient.getUuid());
-
-                return;
+                return showEditPatientMenu(patient.getUuid());
 
             case 0:
                 //application exit
                 Helpers.printInfo("Goodbye :)!");
-                return;
+                break ;
 
             default:
-                Helpers.printError("Unknown option. Exiting application...");
-                return;
-            }
+                return patientInput;
+        }
+            return 99;
     }
-
 
     private static Patient convertRawUserIntoPatient(String rawUser){
         String[] userArray = rawUser.split(",");
-        // Helpers.printInfo(userArray[0]);
         Map<String, String> userAttributes = new HashMap<>();
         for (String attribute : userArray) {
             var attr = attribute.trim().split(":");
-            // Helpers.printInfo(attribute.toString());
-            // Helpers.printInfo(attr[0].toString());
-            // Helpers.printInfo(attr[1].toString());
             userAttributes.put(attr[0].trim(), attr[1].trim());
         }
 
@@ -391,9 +434,9 @@ public class Main {
         Map<String, String> userAttributes = new HashMap<>();
         for (String attribute : userArray) {
             var attr = attribute.trim().split(":");
-            Helpers.printInfo(attribute.toString());
-            Helpers.printInfo(attr[0].toString());
-            Helpers.printInfo(attr[1].toString());
+            Helpers.printInfo(attribute);
+            Helpers.printInfo(attr[0]);
+            Helpers.printInfo(attr[1]);
             userAttributes.put(attr[0].trim(), attr[1].trim());
         }
 
@@ -428,10 +471,9 @@ public class Main {
 
         return null;
     }
-    private static void showEditPatientMenu(String uuid) {
-        // TODO Auto-generated method study
-    String rawUser = ProcessManager.findUser(uuid);
-    //placeholder content
+
+    private static Integer showEditPatientMenu(String uuid) {
+         String rawUser = ProcessManager.getUserProfileAsString(uuid);
         Patient patient = convertRawUserIntoPatient(rawUser);
         // UUID,email,role,isProfileComplete,firstName,lastName,hashed_password,userId,dateOfBirth,isHIVPositive,diagnosisDate,isOnART,ARTStartDate,countryISO
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -444,10 +486,9 @@ public class Main {
         Helpers.printOption(6, "Is on ART?: " + patient.isOnART());
         Helpers.printOption(7, "ART Start Date: " + patient.getArtStartDate());
         Helpers.printOption(8, "Country: "+ patient.getCountryISO());
-        Helpers.printOption(0, "Exit");
-        Helpers.printLine();
+        Helpers.print3OptionFooter("99) to go back","0) to logout","9) to exit");
                 
-        int userInput = Integer.parseInt((input.nextLine()));
+        int userInput = Integer.parseInt((input.next()));
         
         switch (userInput) {
             case 1:
@@ -460,20 +501,28 @@ public class Main {
                     ProcessManager.editUser(patient.getUuid(), patient.getFirstName(), input.nextLine());
                     break;
 
-                    case 0:
-                    //application exit
-                    Helpers.printInfo("Goodbye :)!");
-                    return;
+                case 0:
+                //application exit
+                Helpers.printInfo("Goodbye :)!");
+                return userInput;
             default:
-                break;
+                return userInput;
         }
+        return 99;
 
     }
 
-    private static void createUserReports(){
+    private static Integer createUserReports(){
         try {
+            Helpers.printHeader("User Reports");
+            
             ProcessManager.generateAllUserData();
-            //Old delivarable to download two empty csv files.
+            
+            Helpers.print3OptionFooter("99) to go back","0) to logout","9) to exit");
+            
+            return Integer.parseInt(input.next());
+
+            //Old deliverable to download two empty csv files.
             // File userDataReport = createUserDataReport();
             // if(userDataReport!=null){                
             //     Helpers.printInfo("User report created. Please check resources folder.");            
@@ -483,17 +532,14 @@ public class Main {
             //     Helpers.printInfo("User Analytics created. Please check resources folder.");            
             // }
         } catch (Exception ex) {
-            Helpers.printError("Failed to create user reports: " + ex.getLocalizedMessage());            
+            Helpers.printError("Failed to create user reports: " + ex.getLocalizedMessage());     
+            return 99;       
         }
     }
     
-    private static void initiateNewUser(){
+    private static Integer initiateNewUser(){
             User newUser;
-
-            Helpers.printLine();
-            Helpers.printMessage("Register New User");
-            Helpers.printLine();
-
+            Helpers.printHeader("Register New User");
             String email = setInputfromScanner(input, "email");
 
             Helpers.printMessage("Choose a role for this account:");
@@ -501,13 +547,13 @@ public class Main {
             Helpers.printOption(2, "Admin");
             Helpers.printUserOptionPrompt();
 
-            String newUserRole = input.nextLine();
+            String newUserRole= input.next();
 
             UserManager userManager = new UserManager();
             newUser = userManager.createUser(email, newUserRole);
 
             if(newUser == null)
-                return;
+                return 00;
                 
             Helpers.printMessage("User created successfully.");
             Helpers.printMessage("Please take note of your UUID below and use it to login and complete registration:");
@@ -516,6 +562,7 @@ public class Main {
 
             ProcessManager.initiateUserRegistration(newUser);
             
+            return 00;
     }
 
     private static File createUserDataReport(){
