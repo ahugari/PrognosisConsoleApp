@@ -1,5 +1,6 @@
 package core.infra.ui;
 
+import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -7,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -29,6 +31,7 @@ public class Main {
     private static boolean isLoggedIn = false;
     private static Role currentUserRole;
     private static Scanner input = new Scanner(System.in);
+    private static Console cInput = System.console();
 
     public static void main(String[] args){
         boolean showStartMenu = true;
@@ -164,7 +167,7 @@ public class Main {
         Map<String, String> userAttributes = new HashMap<>();
         for (String attribute : userArray) {
             var attr = attribute.trim().split(":");
-            userAttributes.put(attr[0].trim(), attr[1].trim());
+            userAttributes.put(attr[0].trim(), attr.length>1 ? attr[1].trim() :"");
         }
         return Role.valueOf(userAttributes.get("role"));
     }
@@ -196,7 +199,9 @@ public class Main {
                 validationResult =true;
             }
         }
-        
+        String userProfileAsString = ProcessManager.getUserProfileAsString(uuid.trim());
+        Role userRole = getRoleFromUserStringProfile(userProfileAsString);
+        currentUserRole = userRole; 
         if (currentUserRole == Role.PATIENT) {
             completePatientRegistration(uuid, userEmail);
         } else if (currentUserRole == Role.ADMIN) {
@@ -304,7 +309,7 @@ public class Main {
 
             String adminFirstname = setInputfromScanner(input, "firstname");
             String adminLastname = setInputfromScanner(input, "lastname");
-            String adminPassword = setInputfromScanner(input, "password");
+            String adminPassword = setPasswordInputfromConsole();
 
             Admin admin = new Admin(userEmail);
 
@@ -324,6 +329,15 @@ public class Main {
             inputFromScanner= input.next();
         }
         return inputFromScanner;
+    }
+
+    private static String setPasswordInputfromConsole() {
+        char[] inputFromConsole = {};
+        while (inputFromConsole.length > 0) {
+            Helpers.printUserFieldPrompt("password");
+            inputFromConsole=cInput.readPassword();
+        }
+        return Arrays.toString(inputFromConsole);
     }
 
     private static Integer showAdminUI(String loginUserId){
@@ -432,12 +446,11 @@ public class Main {
             case 0:
                 //application exit
                 Helpers.printInfo("Goodbye :)!");
-                break ;
+                return patientInput;
 
             default:
                 return patientInput;
         }
-            return 99;
     }
 
     private static Patient convertRawUserIntoPatient(String rawUser){
