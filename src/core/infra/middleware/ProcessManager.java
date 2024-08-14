@@ -462,5 +462,28 @@ public class ProcessManager {
         Helpers.printError("Could not complete script execution: " + ex.getLocalizedMessage());
         return null;
     }
-}
+  }
+
+  public static int generateStatistics() {
+    Process p;
+    try {
+        String[] cmdArray = new String[]{"bash", "core/infra/scripts/calculate_statistics.sh"};
+
+        ProcessBuilder pb = new ProcessBuilder(cmdArray);
+
+        // Redirect the output and error streams
+        pb.redirectErrorStream(true);
+        pb.inheritIO();
+
+        // Start the process
+        p = pb.start();
+        p.waitFor();
+
+        return 0;
+    } catch(IOException | InterruptedException e) {
+        Helpers.printError("Could not complete statistics generation: " + e.getLocalizedMessage());
+    }
+    return 1;
+  }
+
 }

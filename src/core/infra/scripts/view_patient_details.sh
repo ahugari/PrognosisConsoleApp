@@ -1,5 +1,5 @@
 #! /bin/bash
-echo "Please wait..."
+# echo "Please wait..."
 
 # Check if UUID is provided
 if [[ $# -eq 0 ]]; then

@@ -123,6 +123,7 @@ public class Patient extends User{
 
         return -1.0;
     }
+    
     public int modifyProfile(User userUpdate){
         return 0;
     }
