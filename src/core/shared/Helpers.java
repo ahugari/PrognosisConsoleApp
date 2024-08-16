@@ -2,6 +2,8 @@ package core.shared;
 
 import java.io.Console;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @SuppressWarnings("unused")
 public class Helpers {
@@ -25,12 +27,38 @@ public class Helpers {
 
     }
     public static void printLine(){
-        print("------------------------------------------------------------------------------------",null);
+        print("-------------------------------------------------------------------------------------",null);
     }
     public static void printHeader(String message){
         printLine();
         printLine();
         System.out.printf(MessageFormat.format("\t\t\t{0}{1}{2}{3}\n", BLUE, BOLD, message, RESET));
+        printLine();
+    }
+    public static void printHeader(String message, String badge){
+        printLine();
+        printLine();
+        System.out.printf(MessageFormat.format("\t\t\tYour current streak level is {0}\n", badge));
+        System.out.printf(MessageFormat.format("\t\t\t\t{0}\n", message));
+        printLine();
+    }
+    public static void printSecondaryHeader(String message){
+        printLine();
+        printLine();
+        System.out.printf(MessageFormat.format("\t\t\t{0}{1}{2}{3}\n", BLUE, BOLD, message, RESET));
+        printLine();
+    }
+    public static void printHeader(String message, String badge){
+        printLine();
+        printLine();
+        System.out.printf(MessageFormat.format("\t\t\tYour current streak level is {0}\n", badge));
+        System.out.printf(MessageFormat.format("\t\t\t\t{0}\n", message));
+        printLine();
+    }
+    public static void printSecondaryHeader(String message){
+        printLine();
+        printLine();
+        System.out.printf(MessageFormat.format("\t\t\t{0}\n", message));
         printLine();
     }
     public static void printMessage(String message){
@@ -55,7 +83,7 @@ public class Helpers {
     public static void print3OptionFooter(String option1, String option2, String option3 ){
         printLargeSpace();
         printLine();
-        System.out.printf(MessageFormat.format("{0}{1}{2}{3}\t\t\t\t\t\t{0}{1}{4}{3}\t{0}{1}{5}{3}\n", BLUE, BOLD, option1, RESET, option2, option3));
+        System.out.printf(MessageFormat.format("{0}{1}{2}{3}\t\t\t\t{0}{1}{4}{3}\t' '{0}{1}{5}{3}\n", BLUE, BOLD, option1, RESET, option2, option3));
         printLine();
         printLine();
     }
@@ -77,4 +105,6 @@ public class Helpers {
         }
         System.out.println(prefix + ':' + ' ' + message);
     }
+
+
 }
