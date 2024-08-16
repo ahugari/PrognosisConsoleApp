@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,19 +29,19 @@ public class ProcessManager {
       try{
           String[] cmdArray = new String[]{"bash", "core/infra/scripts/user_registration.sh",user.getEmail(),user.getUuid(),user.getRole().toString()};
           
-          Helpers.printInfo("Calling bash script...");
+          
           ProcessBuilder pb = new ProcessBuilder(cmdArray);
           pb.redirectErrorStream(true);
           pb.inheritIO();
-          Helpers.printInfo("Executing bash script...");
+          
           p=pb.start();
           p.waitFor();
           
-          Helpers.printInfo("Bash script executed. Returning results...");
+          
           BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
           String line;
           while((line=reader.readLine()) != null){
-              Helpers.printInfo(line);
+              
           }
           return 0;
 
@@ -62,19 +64,19 @@ public class ProcessManager {
           //use while in production mode
             String[] cmdArray = new String[]{"bash", "core/infra/scripts/patient_registration.sh", patient.getFirstName(),patient.getLastName(),patient.getUserId(),patient.getPassword(), patient.getUuid(), patient.getEmail(), patient.getDateOfBirth(),isHIVPositive, patient.getDiagnosisDate(), isOnART, patient.getArtStartDate(), patient.getCountryISO() };
             
-            Helpers.printInfo("Calling bash script...");
+            
             ProcessBuilder pb = new ProcessBuilder(cmdArray);
             pb.redirectErrorStream(true);
             pb.inheritIO();
-            Helpers.printInfo("Executing bash script...");
+            
             p=pb.start();
             p.waitFor();
             
-            Helpers.printInfo("Bash script executed. Returning results...");
+            
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String line;
             while((line=reader.readLine()) != null){
-                Helpers.printInfo(line);
+                
             };
 
             return 1;
@@ -96,20 +98,20 @@ public class ProcessManager {
             //use while in production mode
             String[] cmdArray = new String[]{"bash", "core/infra/scripts/admin_registration.sh", admin.getFirstName(),admin.getLastName(),admin.getUserId(),admin.getPassword(), admin.getUuid(), admin.getEmail()};
             
-            Helpers.printInfo("Calling bash script...");
+            
             ProcessBuilder pb = new ProcessBuilder(cmdArray);
             pb.redirectErrorStream(true);
             pb.inheritIO();
-            Helpers.printInfo("Executing bash script...");
+            
             p=pb.start();
             p.waitFor();
             
-            Helpers.printInfo("Bash script executed. Returning results...");
+            
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String line;
             while((line=reader.readLine()) != null){
-                Helpers.printInfo(line);
-            };
+                
+            }
 
             return 1;
 
@@ -129,29 +131,29 @@ public class ProcessManager {
           //use while in production mode
           String[] cmdArray = new String[]{"bash", "core/infra/scripts/login.sh", email, password};
           
-          Helpers.printInfo("Calling bash script...");
+          
           ProcessBuilder pb = new ProcessBuilder(cmdArray);
           pb.redirectErrorStream(true);
-          Helpers.printInfo("Executing bash script...");
+          
           p=pb.start();
           p.waitFor();
-          Helpers.printInfo("Bash script executed. Returning results...");
+          
           
           UUID uId=null;
           try{
             String rs = p.inputReader().readLine();
-            Helpers.printError(rs);
+            // Helpers.printError(rs);
             if(rs != null){
               uId = UUID.fromString(rs);
             }
             return uId.toString();
           }catch(IllegalArgumentException ex){
-            Helpers.printError("Unable to complete login.");
+            // Helpers.printError("Unable to complete login.");
           }
           return null;
 
       }catch(IOException | InterruptedException ex){
-          Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
+          // Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
       }
 
       return null;
@@ -160,19 +162,19 @@ public class ProcessManager {
     public static String getUserProfileAsString(String uuid){
       String[] cmdArray = new String[]{"bash", "core/infra/scripts/find_user.sh", uuid};
       try{
-        Helpers.printInfo("Calling bash script...");
+        
         ProcessBuilder pb = new ProcessBuilder(cmdArray);
         pb.redirectErrorStream(true);
-        Helpers.printInfo("Executing bash script...");
+        
         Process p=pb.start();
         p.waitFor();
         
         String result = p.inputReader().readLine();
-        Helpers.printInfo("Bash script executed. Returning results...");
+        
 
         return result;
       }catch(IOException | InterruptedException ex){
-          Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
+          // Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
       }
       return null;
     }
@@ -190,22 +192,22 @@ public class ProcessManager {
       String[] cmdArray = new String[]{"bash",path};
 
       try{
-        Helpers.printInfo("Calling bash script...");
+        
         ProcessBuilder pb = new ProcessBuilder(cmdArray);
         pb.redirectErrorStream(true);
         pb.inheritIO();
-        Helpers.printInfo("Executing bash script...");
+        
         Process p=pb.start();
         p.waitFor();
         
-        Helpers.printInfo("Bash script executed. Returning results...");
         
-        Helpers.printInfo("Complete user data report has been created. Download it from: "+ path);
+        
+        Helpers.printMessage("Complete user data report has been created. Download it from: "+ path);
 
         //bonus formatted file
         generateAllUserDataFormatted();
       }catch(IOException | InterruptedException ex){
-          Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
+          // Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
       }
 
       //something went wrong
@@ -223,10 +225,11 @@ public class ProcessManager {
         Process p=pb.start();
         p.waitFor();
         
-        Helpers.printInfo("Formatted user data report has been created. Download it from: "+ path);
+        Helpers.printMessage("Formatted user data report has been created.");
+        Helpers.printMessage("Download it from: "+ path);
 
       }catch(IOException | InterruptedException ex){
-          Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
+          // Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
       }
     }
 
@@ -242,17 +245,17 @@ public class ProcessManager {
             pb.redirectErrorStream(true);
             pb.inheritIO();
     
-            Helpers.printInfo("Executing bash script...");
+            
             p=pb.start();
             p.waitFor();
     
-        Helpers.printInfo("Bash script executed successfully. Returning results....");
+        // Helpers.printInfo("Bash script executed successfully. Returning results....");
 
     
         return 0;
     
           } catch(IOException | InterruptedException e) {
-            Helpers.printError("Could not complete script execution." + e.getLocalizedMessage());
+            // Helpers.printError("Could not complete script execution." + e.getLocalizedMessage());
           }
         return 1;
     }
@@ -265,11 +268,11 @@ public class ProcessManager {
       String[] cmdArray = new String[] {"bash", "core/infra/scripts/find_user_by_role.sh", uuid, role.toString()};
 
       try{
-        Helpers.printInfo("Calling bash script...");
+        
         ProcessBuilder pb = new ProcessBuilder(cmdArray);
         pb.redirectErrorStream(true);
         pb.inheritIO();
-        Helpers.printInfo("Executing bash script...");
+        
         Process p=pb.start();
         p.waitFor();
         
@@ -277,12 +280,12 @@ public class ProcessManager {
 
         Helpers.printInfo(result);
 
-        Helpers.printInfo("Bash script executed. Returning results...");
+        
         
         BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
         String line;
         while((line=reader.readLine()) != null){
-          Helpers.printInfo(line);
+          
         }
 
         
@@ -338,13 +341,13 @@ public class ProcessManager {
           BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
           String line;
           while((line=reader.readLine()) != null){
-              Helpers.printInfo(line);
-          };
+              
+          }
 
           return 1;
 
       }catch(IOException | InterruptedException ex){
-          Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
+          // Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
       }
 
     return 0;
@@ -352,26 +355,26 @@ public class ProcessManager {
 
     private static int runBashScript(String[] commandArray){
       try{
-        Helpers.printInfo("Calling bash script...");
+        
         ProcessBuilder pb = new ProcessBuilder(commandArray);
         pb.redirectErrorStream(true);
         pb.inheritIO();
-        Helpers.printInfo("Executing bash script...");
+        
         Process p=pb.start();
         
-        Helpers.printInfo("Bash script executed. Returning results...");
+        
         
         BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
         String line;
         while((line=reader.readLine()) != null){
-          Helpers.printInfo(line);
+          
         }
 
         return p.waitFor();
         
 
       }catch(IOException | InterruptedException ex){
-          Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
+          // Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
       }
 
       //something went wrong
@@ -381,20 +384,115 @@ public class ProcessManager {
     public static void getPatientProfileIncludingLifeSpan(String uuid, Double lifeSpan) {
       String[] cmdArray = new String[]{"bash", "core/infra/scripts/view_patient_details.sh", uuid, lifeSpan.toString()};
       try{
-        Helpers.printInfo("Calling bash script...");
+        
         ProcessBuilder pb = new ProcessBuilder(cmdArray);
         pb.redirectErrorStream(true);
         pb.inheritIO();
-        Helpers.printInfo("Executing bash script...");
+        
         Process p=pb.start();
         p.waitFor();
         
-        Helpers.printInfo("Bash script executed. Returning results...");
+        
         
 
       }catch(IOException | InterruptedException ex){
-          Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
+          // Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
       }
     }
+
+	public static void createARTSchedule(Patient patient) {
+    String artInterval = "5";
+    String formattedDate = getFormattedDateToday();
+    String artDate = patient.getArtStartDate() == null ? formattedDate : patient.getArtStartDate();
+    String achievement = "starter";
+    String points = "0";
+    String[] cmdArray = new String[]{"bash", "core/infra/scripts/create_art_schedule.sh", patient.getUuid(), artInterval, artDate,points,achievement};
+    try{
+      Helpers.printInfo("Calling bash script..." + cmdArray);
+      ProcessBuilder pb = new ProcessBuilder(cmdArray);
+      pb.redirectErrorStream(true);
+      pb.inheritIO();
+      
+      Process p=pb.start();
+      p.waitFor();
+      
+      
+      
+    }catch(IOException | InterruptedException ex){
+        // Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
+    }
+  }
+
+  public static String confirmARTSchedule(Patient patient) {
+    String[] cmdArray = new String[]{"bash", "core/infra/scripts/art_schedule_exists.sh", patient.getUuid()};
+      try{
+        
+        ProcessBuilder pb = new ProcessBuilder(cmdArray);
+        pb.redirectErrorStream(true);
+        
+        Process p=pb.start();
+        p.waitFor();
+        
+        String result = p.inputReader().readLine();
+        
+
+        return result;
+      }catch(IOException | InterruptedException ex){
+          // Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
+      }
+      return null;
+  }
+
+  public static String updateARTSchedule(Patient patient, Map<String, String> artSchedule, String oldARTSchedule) {
+    Helpers.printError(oldARTSchedule);
+    String[] cmdArray = new String[]{"bash", "core/infra/scripts/update_art_schedule.sh", patient.getUuid(), artSchedule.get("interval"), artSchedule.get("lastDateOfART"), artSchedule.get("points"), artSchedule.get("currentAchievement"), oldARTSchedule};
+    try{
+      
+      ProcessBuilder pb = new ProcessBuilder(cmdArray);
+      pb.redirectErrorStream(true);
+      
+      Process p=pb.start();
+      p.waitFor();
+      
+      String result = p.inputReader().readLine();
+      
+
+      return result;
+    }catch(IOException | InterruptedException ex){
+        // Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
+    }
+    return null;
+  }
+
+  public static String getARTSchedule(Patient patient) {
+    String uuid = patient.getUuid();
+    String[] cmdArray = new String[]{"bash", "core/infra/scripts/get_art_schedule.sh", uuid};
+      try{
+        
+        ProcessBuilder pb = new ProcessBuilder(cmdArray);
+        pb.redirectErrorStream(true);
+        
+        Process p=pb.start();
+        p.waitFor();
+        
+        String result = p.inputReader().readLine();
+        
+
+        return result;
+      }catch(IOException | InterruptedException ex){
+          // Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
+      }
+      return null;
+  }
+
+  private static String getFormattedDateToday() {
+    Date today = new Date();
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    String formattedDate = formatter.format(today);
+    return formattedDate;
+  }
+
+
+
 
 }

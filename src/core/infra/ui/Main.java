@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -29,6 +30,7 @@ import core.shared.Helpers;
 public class Main {
     private static boolean isLoggedIn = false;
     private static Role currentUserRole;
+    private static String patientBadge = "";
     private static Scanner input = new Scanner(System.in);
     private static Console cInput = System.console();
 
@@ -40,7 +42,7 @@ public class Main {
         Helpers.printMessage("Let's get started. What would you like to do?");
         Helpers.printOption(1, "Login");
         Helpers.printOption(2, "Complete Profile Registration");
-        Helpers.print1OptionFooter("0) to exit");
+        Helpers.print1OptionFooter("0) to exit ❌");
 
             try{
                 String in = input.next();
@@ -63,7 +65,7 @@ public class Main {
                                 logoutUser();
                                }
                             }catch (IllegalArgumentException ex){
-                                 Helpers.printInfo("Login failed. Returning to Start menu.");
+                                //  Helpers.printInfo("Login failed. Returning to Start menu.");
                                  break;   
                             }
                         }else{
@@ -77,22 +79,28 @@ public class Main {
                         Integer registrationResult = completeProfileRegistration();
                         if(registrationResult == -1) {
                             //exit application
-                            Helpers.printInfo("Goodbye :)!");
-                            return;
+                            // Helpers.printInfo("Goodbye :)!");
+                showStartMenu=true;
+
+                            break;
                         }else if(registrationResult == 00){
                             //display start menu
+                showStartMenu=true;
+
                             break;
                         }
+                showStartMenu=true;
+
                         //if anything failed or everything went well we display the menu again
                         break;
 
                     case 0:
                         //application exit
-                        Helpers.printInfo("Goodbye :)!");
+                        // Helpers.printInfo("Goodbye :)!");
                         return;
 
                     default:
-                        Helpers.printError("Unknown option. Exiting application...");
+                        // Helpers.printError("Unknown option. Exiting application...");
                         break;
                 }
             } catch (NumberFormatException e) {
@@ -144,7 +152,7 @@ public class Main {
             userPassword = setInputfromScanner(input, "password");
         }
 
-        Helpers.printInfo("Logging you in...");
+        // Helpers.printInfo("Logging you in...");
 
         String loginUserId = ProcessManager.login(loginEmail, userPassword);
 
@@ -218,10 +226,10 @@ public class Main {
             //since script's normal execution result is 0, we check for 1 as the result
         }else if(findResult == 0){
             //if we found the user then the registration was completed
-            Helpers.printInfo("Registration completion not available for provided user details.");
+            // Helpers.printInfo("Registration completion not available for provided user details.");
             return;
         }else{
-            Helpers.printInfo("Something went wrong with while verifying user profile");
+            // Helpers.printInfo("Something went wrong with while verifying user profile");
             return;
         }
 
@@ -238,7 +246,7 @@ public class Main {
         try{
             dateOfBirth = dateFormat.format(dateFormat.parse(input.next()));
         } catch (ParseException ex) {
-            Helpers.printError("Invalid date format entered: " + ex.getLocalizedMessage());
+            // Helpers.printError("Invalid date format entered: " + ex.getLocalizedMessage());
         } 
         Helpers.printMessage("Are you HIV positive?");
         Helpers.printOption(1, "Yes");
@@ -269,9 +277,9 @@ public class Main {
                     artStartDate = dateFormat.format(dateFormat.parse(input.next()));
                 }
             } catch (ParseException ex) {
-                Helpers.printError("Invalid date format entered: " + ex.getLocalizedMessage());
+                // Helpers.printError("Invalid date format entered: " + ex.getLocalizedMessage());
             } catch (NumberFormatException ex){
-                Helpers.printError("Invalid number entered: " + ex.getLocalizedMessage());
+                // Helpers.printError("Invalid number entered: " + ex.getLocalizedMessage());
             }
         } 
 
@@ -293,7 +301,7 @@ public class Main {
         patient.setUserId(uuid);
         patient.setHIVPositive(isHIVPositive ==1);
 
-        Helpers.printInfo("Completing Patient Profile...");
+        // Helpers.printInfo("Completing Patient Profile...");
 
         ProcessManager.registerPatient(patient); 
     }
@@ -302,13 +310,13 @@ public class Main {
         String findResult = ProcessManager.getUserProfileAsString(uuid);
 
         if(findResult==null){
-                Helpers.printInfo("Could not verify user.");
+                // Helpers.printInfo("Could not verify user.");
                 return;
             }
 
             String adminFirstname = setInputfromScanner(input, "firstname");
             String adminLastname = setInputfromScanner(input, "lastname");
-            String adminPassword = setPasswordInputfromConsole();
+            String adminPassword = setInputfromScanner(input, "password");
 
             Admin admin = new Admin(userEmail);
 
@@ -327,6 +335,7 @@ public class Main {
             Helpers.printUserFieldPrompt(fieldName);
             inputFromScanner= input.next();
         }
+        // Helpers.printError(inputFromScanner);
         return inputFromScanner;
     }
 
@@ -350,7 +359,7 @@ public class Main {
         Helpers.printOption(1, "Register New User");
         Helpers.printOption(2, "Download User Reports");
         
-        Helpers.print2OptionFooter("0) to logout","9) to exit");
+        Helpers.print2OptionFooter("0) to logout 👋","9) to exit ❌");
 
         int adminInput = Integer.parseInt(input.next());
 
@@ -361,14 +370,14 @@ public class Main {
                 return createUserReports();
             case 0:
                 //application exit
-                Helpers.printInfo("Logging you out...");
+                // Helpers.printInfo("Logging you out...");
                 return 00;
             case 9:
                 //application exit
-                Helpers.printInfo("Goodbye :)!");
+                // Helpers.printInfo("Goodbye :)!");
                 return 9;
             default:
-            Helpers.printError("Unknown option. Exiting application...");
+            // Helpers.printError("Unknown option. Exiting application...");
             break;
         }
         return 9;
@@ -378,10 +387,15 @@ public class Main {
     String rawUser = ProcessManager.getUserProfileAsString(loginUserId);
     // Helpers.printInfo(rawUser);
     Patient patient = convertRawUserIntoPatient(rawUser);
-        Helpers.printHeader("Choose an option:");
+        setPatientBadge(patient);
+
+        Helpers.printHeader("Choose an option:", patientBadge);
         Helpers.printOption(1, "View Profile");
         Helpers.printOption(2, "Edit Profile");
-        Helpers.print2OptionFooter("0) to logout","9) to exit");
+        Helpers.printOption(3, "Create ART Schedule");
+        Helpers.printOption(4, "Update ART Schedule");
+        Helpers.printOption(5, "Show off ART streak");
+        Helpers.print2OptionFooter("0) to logout 👋","9) to exit ❌");
 
 
         int patientInput = Integer.parseInt(input.next());
@@ -391,21 +405,128 @@ public class Main {
                 Double lifeSpan = patient.calculateSurvivalRate();
                 Helpers.printHeader("Patient");
                 ProcessManager.getPatientProfileIncludingLifeSpan(patient.getUuid(), lifeSpan);
-                Helpers.print3OptionFooter("99) to go back","0) to logout","9) to exit");
+                Helpers.print3OptionFooter("99) to go back ⬅️","0) to logout 👋","9) to exit ❌");
                 int viewPatientInput = Integer.parseInt(input.next());
                     return viewPatientInput;
 
             case 2:
                 return showEditPatientMenu(patient.getUuid());
 
+            case 3:
+                ProcessManager.createARTSchedule(patient);
+                return 99;
+
+            case 4:
+                //check if patient has an ART schedule
+                String res = ProcessManager.confirmARTSchedule(patient);
+                // Helpers.printError(res);
+                if(res.equals("0")){
+                    String artSchedule = ProcessManager.getARTSchedule(patient);
+                    String[] artScheduleArray = artSchedule.split(",");
+                    Map<String, String> scheduleAttributes = new HashMap<>();
+                    for (String attribute : artScheduleArray) {
+                        var attr = attribute.trim().split(":");
+                        scheduleAttributes.put(attr[0].trim(), attr[1].trim());
+                    }
+
+                    int artInterval=Integer.parseInt(scheduleAttributes.get("interval"));
+                    String nextARTDate = addDaysToDate(artInterval, scheduleAttributes.get("lastDateOfART"));
+
+                    Helpers.printHeader("Have you taken your ART medication for "+ nextARTDate +"?");
+                    Helpers.printOption(1, "Yes 👍");
+                    Helpers.printOption(2, "No 😥");
+                    Helpers.print3OptionFooter("99) to go back ⬅️ 🔙","0) to logout 👋 🚪","9) to exit ❌ 📴");
+                    
+                    int confirmInput = Integer.parseInt(input.next());
+                    
+                    switch (confirmInput) {
+                        case 1:
+                            //change the lastDateOfART
+                            String oldARTSchedule =scheduleAttributes.get("uuid")+","+scheduleAttributes.get("interval")+","+scheduleAttributes.get("lastDateOfART")+","+scheduleAttributes.get("points")+","+scheduleAttributes.get("currentAchievement");
+                            updateARTSchedule(scheduleAttributes);
+                            ProcessManager.updateARTSchedule(patient, scheduleAttributes,oldARTSchedule);
+                            setPatientBadge(patient);
+
+                            return 99;
+                            case 0: 
+                            return confirmInput;
+                            case 9:
+                            return confirmInput; 
+                            default:
+                            break;
+                    }
+                }else{
+                    Helpers.printHeader("Looks like you do not have any ART schedule.");
+                    Helpers.printSecondaryHeader(("Would you like to create one?"));
+                    Helpers.printOption(1, "Yes 👌");
+                    Helpers.printOption(2, "No 😒");
+                    Helpers.print3OptionFooter("99) to go back ⬅️ 🔙","0) to logout 👋 🚪","9) to exit ❌ 📴");
+                    
+                    int confirmInput = Integer.parseInt(input.next());
+                    
+                    switch (confirmInput) {
+                        case 1:
+                            ProcessManager.createARTSchedule(patient);
+
+                        return 99;
+                        case 0: 
+                            return confirmInput;
+                        case 9:
+                            return confirmInput; 
+                        default:
+                            break;
+                    }
+                }
+            return 99;
+
+
             case 0:
                 //application exit
-                Helpers.printInfo("Goodbye :)!");
+                // Helpers.printInfo("Goodbye :)!");
                 return patientInput;
 
             default:
                 return patientInput;
         }
+        
+    }
+
+    private static void setPatientBadge(Patient patient) {
+        String artSchedule = ProcessManager.getARTSchedule(patient);
+        if(artSchedule==null)return;
+        String[] artScheduleArray = artSchedule.split(",");
+        Map<String, String> scheduleAttributes = new HashMap<>();
+        for (String attribute : artScheduleArray) {
+            var attr = attribute.trim().split(":");
+            scheduleAttributes.put(attr[0].trim(), attr[1].trim());
+        }
+        patientBadge=scheduleAttributes.get("currentAchievement");
+    }
+
+    private static Map<String, String> updateARTSchedule(Map<String, String> scheduleAttributes) {
+        scheduleAttributes.put("lastDateOfART",getFormattedDateToday());
+        Integer newPoints = Integer.parseInt(scheduleAttributes.get("points"))+5;
+        scheduleAttributes.put("points",newPoints.toString());
+
+        if(newPoints <5){
+            scheduleAttributes.put("currentAchievement","Bronze 🥉");
+        }
+        else if(newPoints > 5 && newPoints < 15){
+            scheduleAttributes.put("currentAchievement","Silver 🥈");
+        }else if(newPoints > 15 && newPoints < 30){
+            scheduleAttributes.put("currentAchievement","Gold 🥇");
+        }
+        else if(newPoints > 30 && newPoints < 50){
+            scheduleAttributes.put("currentAchievement","Crystal 💎");
+        }else if(newPoints > 50 && newPoints < 70){
+            scheduleAttributes.put("currentAchievement","Master 🛡️");
+        }else if(newPoints > 80 && newPoints < 90){
+            scheduleAttributes.put("currentAchievement","Champion ⚔️");
+        }else if(newPoints > 90){
+            scheduleAttributes.put("currentAchievement","Titan 👑");
+        }
+
+        return scheduleAttributes;
     }
 
     private static Patient convertRawUserIntoPatient(String rawUser){
@@ -435,7 +556,7 @@ public class Main {
                 patient.setHIVPositive("true".equals(userAttributes.get("isHIVPositive")));
                 return patient;
             }catch(Exception ex){
-                Helpers.printError(ex.getLocalizedMessage());
+                // Helpers.printError(ex.getLocalizedMessage());
             }
 
         return null;
@@ -486,7 +607,7 @@ public class Main {
     }
 
     private static Integer showEditPatientMenu(String uuid) {
-         String rawUser = ProcessManager.getUserProfileAsString(uuid);
+        String rawUser = ProcessManager.getUserProfileAsString(uuid);
         Patient patient = convertRawUserIntoPatient(rawUser);
         // UUID,email,role,isProfileComplete,firstName,lastName,hashed_password,userId,dateOfBirth,isHIVPositive,diagnosisDate,isOnART,ARTStartDate,countryISO
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -499,7 +620,7 @@ public class Main {
         Helpers.printOption(6, "Is on ART?: " + patient.isOnART());
         Helpers.printOption(7, "ART Start Date: " + patient.getArtStartDate());
         Helpers.printOption(8, "Country: "+ patient.getCountryISO());
-        Helpers.print3OptionFooter("99) to go back","0) to logout","9) to exit");
+        Helpers.print3OptionFooter("99) to go back ⬅️","0) to logout 👋","9) to exit ❌");
                 
         int userInput = Integer.parseInt((input.next()));
         
@@ -516,7 +637,7 @@ public class Main {
 
                 case 0:
                 //application exit
-                Helpers.printInfo("Goodbye :)!");
+                // Helpers.printInfo("Goodbye :)!");
                 return userInput;
             default:
                 return userInput;
@@ -531,7 +652,7 @@ public class Main {
             
             ProcessManager.generateAllUserData();
             
-            Helpers.print3OptionFooter("99) to go back","0) to logout","9) to exit");
+            Helpers.print3OptionFooter("99) to go back ⬅️","0) to logout 👋","9) to exit ❌");
             
             return Integer.parseInt(input.next());
 
@@ -571,7 +692,7 @@ public class Main {
             Helpers.printMessage("User created successfully.");
             Helpers.printMessage("Please take note of your UUID below and use it to login and complete registration:");
             Helpers.printMessage(newUser.getUuid());
-            Helpers.printInfo("Registering user...");
+            // Helpers.printInfo("Registering user...");
 
             ProcessManager.initiateUserRegistration(newUser);
             
@@ -583,13 +704,14 @@ public class Main {
         File userData = new File(filePath);
         try{
             if(userData.createNewFile()){
-                Helpers.printInfo("User data report created. Download this report from this path:" + filePath);
+                Helpers.printMessage("User data report created.");
+                Helpers.printMessage("Download this report from this path:" + filePath);
                 return userData;
             }else{
-                Helpers.printInfo("Failed to create user report.");
+                // Helpers.printInfo("Failed to create user report.");
             }
         }catch(IOException ex){
-            Helpers.printError("Failed to create user report." + ex.getLocalizedMessage());
+            // Helpers.printError("Failed to create user report." + ex.getLocalizedMessage());
         }
         return null;
     }
@@ -599,15 +721,48 @@ public class Main {
         File userData = new File(filePath);
         try{
             if(userData.createNewFile()){
-                Helpers.printInfo("User data report created. Download this report from this path:" + filePath);
+                // Helpers.printInfo("User data report created. Download this report from this path:" + filePath);
                 return userData;
             }else{
-                Helpers.printInfo("Failed to create user report.");
+                // Helpers.printInfo("Failed to create user report.");
             }
         }catch(IOException ex){
-            Helpers.printError("Failed to create user report." + ex.getLocalizedMessage());
+            // Helpers.printError("Failed to create user report." + ex.getLocalizedMessage());
         }
         return null;
     }
+
+    private static String getFormattedDateToday() {
+        Date today = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = formatter.format(today);
+        return formattedDate;
+    }
     
+
+    private static String addDaysToDate(int days, String date){
+        
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            // Parse a date string into a Date object
+            Date initialDate = sdf.parse(date); // Example date: January 1, 2022
+            
+            // Create a Calendar instance and set it to the initial date
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(initialDate);
+            
+            // Add days (e.g., adding 5 days)
+            calendar.add(Calendar.DAY_OF_MONTH, days);
+            
+            // Get the new date from the calendar
+            Date newDate = calendar.getTime();
+            
+            // Format the new date back to String
+            String formattedNewDate = sdf.format(newDate);
+            return formattedNewDate; 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
 }

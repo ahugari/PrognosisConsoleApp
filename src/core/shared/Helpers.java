@@ -2,6 +2,8 @@ package core.shared;
 
 import java.io.Console;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Helpers {
     public static void printInfo(String message){
@@ -19,9 +21,22 @@ public class Helpers {
 
     }
     public static void printLine(){
-        print("------------------------------------------------------------------------------------",null);
+        print("-------------------------------------------------------------------------------------",null);
     }
     public static void printHeader(String message){
+        printLine();
+        printLine();
+        System.out.printf(MessageFormat.format("\t\t\t{0}\n", message));
+        printLine();
+    }
+    public static void printHeader(String message, String badge){
+        printLine();
+        printLine();
+        System.out.printf(MessageFormat.format("\t\t\tYour current streak level is {0}\n", badge));
+        System.out.printf(MessageFormat.format("\t\t\t\t{0}\n", message));
+        printLine();
+    }
+    public static void printSecondaryHeader(String message){
         printLine();
         printLine();
         System.out.printf(MessageFormat.format("\t\t\t{0}\n", message));
@@ -40,14 +55,14 @@ public class Helpers {
     public static void print2OptionFooter(String option1, String option2 ){
         printLargeSpace();
         printLine();
-        System.out.printf(MessageFormat.format("\t\t\t\t\t\t\t{0}\t{1}\n", option1, option2));
+        System.out.printf(MessageFormat.format("\t\t\t\t\t\t{0}\t' '{1}\n", option1, option2));
         printLine();
         printLine();
     }
     public static void print3OptionFooter(String option1, String option2, String option3 ){
         printLargeSpace();
         printLine();
-        System.out.printf(MessageFormat.format("{0}\t\t\t\t\t\t{1}\t{2}\n", option1, option2, option3));
+        System.out.printf(MessageFormat.format("{0}\t\t\t\t{1}\t' '{2}\n", option1, option2, option3));
         printLine();
         printLine();
     }
@@ -69,4 +84,6 @@ public class Helpers {
         }
         System.out.println(prefix + ':' + ' ' + message);
     }
+
+
 }
