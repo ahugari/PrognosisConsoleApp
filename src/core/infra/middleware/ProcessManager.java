@@ -382,43 +382,53 @@ public class ProcessManager {
       return 1;
     }
 
-  //   public static void getPatientProfileIncludingLifeSpan(String uuid, Double lifeSpan) {
-  //     String[] cmdArray = new String[]{"bash", "core/infra/scripts/view_patient_details.sh", uuid, lifeSpan.toString()};
-  //     try{
-  //       Helpers.printInfo("Calling bash script...");
-  //       ProcessBuilder pb = new ProcessBuilder(cmdArray);
-  //       pb.redirectErrorStream(true);
-  //       pb.inheritIO();
-  //       Helpers.printInfo("Executing bash script...");
-  //       Process p=pb.start();
-  //       p.waitFor();
-        
-  //       Helpers.printInfo("Bash script executed. Returning results...");
-        
-
-  //     }catch(IOException | InterruptedException ex){
-  //         Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
-  //     }
-  // }
-
-  public static String[] getPatientProfileIncludingLifeSpan(String uuid, Double lifeSpan) {
-    String[] cmdArray = new String[]{"bash", "core/infra/scripts/view_patient_details.sh", uuid, lifeSpan.toString()};
-    try {
-        // 
-        ProcessBuilder pb = new ProcessBuilder(cmdArray);
-        pb.redirectErrorStream(true);
-        pb.inheritIO();
-        
-        Process p=pb.start();
-        p.waitFor();
-        
-        
-        
-
-      }catch(IOException | InterruptedException ex){
-          // Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
+    public static String[] getPatientProfileIncludingLifeSpan(String uuid, Double lifeSpan) {
+      String[] cmdArray = new String[]{"bash", "core/infra/scripts/view_patient_details.sh", uuid, lifeSpan.toString()};
+      try {
+          // Helpers.printInfo("Calling bash script...");
+          ProcessBuilder pb = new ProcessBuilder(cmdArray);
+          pb.redirectErrorStream(true);
+          Process p = pb.start();
+          
+          // Capture output from the script
+          BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+          String line;
+          String[] profileData = null;
+          
+          // Read the output from the script and split it into an array
+          while ((line = reader.readLine()) != null) {
+              profileData = line.split(",");
+          }
+          
+          p.waitFor();
+          
+          // Helpers.printInfo("Bash script executed. Returning results...");
+          return profileData;
+  
+      } catch (IOException | InterruptedException ex) {
+          Helpers.printError("Could not complete script execution: " + ex.getLocalizedMessage());
+          return null;
       }
     }
+
+    
+
+  // public static void getPatientProfileIncludingLifeSpan(String uuid, Double lifeSpan) {
+  //   String[] cmdArray = new String[]{"bash", "core/infra/scripts/view_patient_details.sh", uuid, lifeSpan.toString()};
+  //   try{
+      
+  //     ProcessBuilder pb = new ProcessBuilder(cmdArray);
+  //     pb.redirectErrorStream(true);
+  //     pb.inheritIO();
+      
+  //     Process p=pb.start();
+  //     p.waitFor();
+      
+      
+  //   } catch(IOException | InterruptedException ex){
+  //       // Helpers.printError("Could not complete script execution." + ex.getLocalizedMessage());
+  //   }
+  // }
 
 	public static void createARTSchedule(Patient patient) {
     String artInterval = "5";
@@ -512,7 +522,47 @@ public class ProcessManager {
     return formattedDate;
   }
 
+  public static int generateStatisticsData() {
+        Process p;
+        try {
+            // Define the command to execute the script
+            String[] cmdArray = new String[]{"bash", "core/infra/scripts/calculate_statistics.sh"};
 
+            // Use ProcessBuilder to run the script
+            ProcessBuilder pb = new ProcessBuilder(cmdArray);
+
+            // Redirect the output and error streams to the console
+            pb.redirectErrorStream(true);
+            pb.inheritIO();
+
+            // Start the process
+            p = pb.start();
+
+            // Wait for the script to finish executing
+            int exitCode = p.waitFor();
+
+            // Check if the statistics files were created successfully
+            if (exitCode == 0) {
+                File csvFile = new File("core/infra/data/statistics.csv");
+                File txtFile = new File("core/infra/data/statistics.txt");
+
+                if (csvFile.exists() && txtFile.exists()) {
+                    System.out.println("Statistics generation completed successfully.");
+                    return 0;
+                } else {
+                    System.err.println("Statistics files were not created.");
+                    return 2;
+                }
+            } else {
+                System.err.println("Statistics generation script failed.");
+                return 1;
+            }
+        } catch (IOException | InterruptedException e) {
+            // Handle exceptions and print an error message
+            System.err.println("Error occurred while generating statistics: " + e.getMessage());
+            return 1;
+        }
+    }
 
 
 }

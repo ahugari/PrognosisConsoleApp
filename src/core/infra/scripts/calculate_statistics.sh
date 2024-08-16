@@ -2,8 +2,8 @@
 
 # Paths to files
 USER_STORE="$HOME/PrognosisConsoleApp/src/core/infra/data/user-store.txt"
-STATS_FILE_CSV="$HOME/PrognosisConsoleApp/src/core/infra/data/statistics.csv"
-STATS_FILE_TXT="$HOME/PrognosisConsoleApp/src/core/infra/data/statistics.txt"
+STATS_FILE_CSV="$HOME/PrognosisConsoleApp/src/core/infra/resources/statistics.csv"
+STATS_FILE_TXT="$HOME/PrognosisConsoleApp/src/core/infra/resources/statistics.txt"
 
 # Temporary file to store life expectancy values
 TEMP_LIFE_EXPECTANCY="$HOME/PrognosisConsoleApp/src/core/infra/data/temp_life_expectancy.txt"

@@ -359,6 +359,7 @@ public class Main {
 
         Helpers.printOption(1, "Register New User");
         Helpers.printOption(2, "Download User Reports");
+        Helpers.printOption(3, "Generate Statistics Report");
         
         Helpers.print2OptionFooter("0) to logout 👋","9) to exit ❌");
 
@@ -369,6 +370,8 @@ public class Main {
                 return initiateNewUser();
             case 2:
                 return createUserReports();
+            case 3:
+                return createStatisticsReport();
             case 0:
                 //application exit
                 // Helpers.printInfo("Logging you out...");
@@ -395,7 +398,7 @@ public class Main {
         Helpers.printOption(2, "Edit Profile");
         Helpers.printOption(3, "Create ART Schedule");
         Helpers.printOption(4, "Update ART Schedule");
-        Helpers.printOption(5, "Show off ART streak");
+        // Helpers.printOption(5, "Show off ART streak");
         Helpers.print2OptionFooter("0) to logout 👋","9) to exit ❌");
 
 
@@ -404,8 +407,8 @@ public class Main {
         switch (patientInput) {
             case 1:
                 Double lifeSpan = patient.calculateSurvivalRate();
-                Helpers.printHeader("Patient Profile Details");
-                String[] profileData = ProcessManager.getPatientProfileIncludingLifeSpan(patient.getUuid(), lifeSpan);
+                Helpers.printHeader("Patient");
+                String [] profileData = ProcessManager.getPatientProfileIncludingLifeSpan(patient.getUuid(), lifeSpan);
 
                 final String RESET = "\u001B[0m";
                 final String BLUE = "\u001B[34m";
@@ -446,13 +449,13 @@ public class Main {
                     }
                     System.out.println(BOLD + BLUE + "Remaining Life Span: " + RESET + remainingLifeSpan + " years");
                 } else {
+                    
                     Helpers.printError("Unexpected script output format.");
                 }
 
-                Helpers.print3OptionFooter("99) to go back","0) to logout","9) to exit");
+                Helpers.print3OptionFooter("99) to go back ⬅️","0) to logout 👋","9) to exit ❌");
                 int viewPatientInput = Integer.parseInt(input.next());
-                return viewPatientInput;
-
+                    return viewPatientInput;
 
             case 2:
                 return showEditPatientMenu(patient.getUuid());
@@ -655,6 +658,7 @@ public class Main {
         String rawUser = ProcessManager.getUserProfileAsString(uuid);
         Patient patient = convertRawUserIntoPatient(rawUser);
         // UUID,email,role,isProfileComplete,firstName,lastName,hashed_password,userId,dateOfBirth,isHIVPositive,diagnosisDate,isOnART,ARTStartDate,countryISO
+        @SuppressWarnings("unused")
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Helpers.printMessage("Choose a field to edit:");
         Helpers.printOption(1, "First Name: "+ patient.getFirstName());
@@ -727,7 +731,7 @@ public class Main {
                 break;
             case 0:
                 //application exit
-                // Helpers.printInfo("Goodbye :)!");
+                Helpers.printInfo("Goodbye :)!");
                 return userInput;
             default:
                 return userInput;
@@ -741,6 +745,31 @@ public class Main {
             Helpers.printHeader("User Reports");
             
             ProcessManager.generateAllUserData();
+            
+            Helpers.print3OptionFooter("99) to go back ⬅️","0) to logout 👋","9) to exit ❌");
+            
+            return Integer.parseInt(input.next());
+
+            //Old deliverable to download two empty csv files.
+            // File userDataReport = createUserDataReport();
+            // if(userDataReport!=null){                
+            //     Helpers.printInfo("User report created. Please check resources folder.");            
+            // }
+            // File userAnalyticsReport = createUserAnalyticsReport();
+            // if(userAnalyticsReport!=null){
+            //     Helpers.printInfo("User Analytics created. Please check resources folder.");            
+            // }
+        } catch (Exception ex) {
+            Helpers.printError("Failed to create user reports: " + ex.getLocalizedMessage());     
+            return 99;       
+        }
+    }
+
+    private static Integer createStatisticsReport(){
+        try {
+            Helpers.printHeader("Statistics Report");
+            
+            ProcessManager.generateStatisticsData();
             
             Helpers.print3OptionFooter("99) to go back ⬅️","0) to logout 👋","9) to exit ❌");
             
@@ -806,6 +835,7 @@ public class Main {
         return null;
     }
     
+    @SuppressWarnings("unused")
     private static File createUserAnalyticsReport(){
         String filePath = "core/infra/resources/userAnalytics.csv";
         File userData = new File(filePath);
@@ -856,3 +886,7 @@ public class Main {
         return date;
     }
 }
+
+
+
+

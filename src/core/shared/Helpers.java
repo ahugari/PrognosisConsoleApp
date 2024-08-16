@@ -39,26 +39,26 @@ public class Helpers {
         printLine();
         printLine();
         System.out.printf(MessageFormat.format("\t\t\tYour current streak level is {0}\n", badge));
-        System.out.printf(MessageFormat.format("\t\t\t\t{0}\n", message));
+        System.out.printf(MessageFormat.format("\t\t\t\t{0}\n", BLUE, BOLD, message, RESET));
         printLine();
     }
+    // public static void printSecondaryHeader(String message){
+    //     printLine();
+    //     printLine();
+    //     System.out.printf(MessageFormat.format("\t\t\t{0}{1}{2}{3}\n", BLUE, BOLD, message, RESET));
+    //     printLine();
+    // }
+    // public static void printHeader(String message, String badge){
+    //     printLine();
+    //     printLine();
+    //     System.out.printf(MessageFormat.format("\t\t\tYour current streak level is {0}\n", badge));
+    //     System.out.printf(MessageFormat.format("\t\t\t\t{0}\n", message));
+    //     printLine();
+    // }
     public static void printSecondaryHeader(String message){
         printLine();
         printLine();
-        System.out.printf(MessageFormat.format("\t\t\t{0}{1}{2}{3}\n", BLUE, BOLD, message, RESET));
-        printLine();
-    }
-    public static void printHeader(String message, String badge){
-        printLine();
-        printLine();
-        System.out.printf(MessageFormat.format("\t\t\tYour current streak level is {0}\n", badge));
-        System.out.printf(MessageFormat.format("\t\t\t\t{0}\n", message));
-        printLine();
-    }
-    public static void printSecondaryHeader(String message){
-        printLine();
-        printLine();
-        System.out.printf(MessageFormat.format("\t\t\t{0}\n", message));
+        System.out.printf(MessageFormat.format("\t\t\t{0}\n", BLUE, BOLD, message, RESET));
         printLine();
     }
     public static void printMessage(String message){
